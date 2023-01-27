@@ -4,6 +4,8 @@ from media_pipe_module import mediapipe_drawing_styles
 from media_pipe_module import mediapipe_pose
 import numpy as np
 import math
+from numpy import dot
+from numpy.linalg import norm
 
 
 
@@ -92,28 +94,28 @@ def tracking(cap) :
                 #print(id, ":", cx, cy)
                 
 
-            _11_to_12 = np.array([[array[12][0]],[array[12][1]]]) - np.array([[array[11][0]],[array[11][1]]])    #11 -> 12    
-            _14_to_12 = np.array([[array[12][0]],[array[12][1]]]) - np.array([[array[14][0]],[array[14][1]]])    #14 -> 12
-            _13_to_11 = np.array([[array[11][0]],[array[11][1]]]) - np.array([[array[13][0]],[array[13][1]]])    #13 -> 11
-            _16_to_14 = np.array([[array[14][0]],[array[14][1]]]) - np.array([[array[16][0]],[array[16][1]]])    #16 -> 14
-            _15_to_13 = np.array([[array[13][0]],[array[13][1]]]) - np.array([[array[15][0]],[array[15][1]]])    #15 -> 13
-            _18_to_16 = np.array([[array[16][0]],[array[16][1]]]) - np.array([[array[18][0]],[array[18][1]]])    #18 -> 16
-            _17_to_15 = np.array([[array[15][0]],[array[15][1]]]) - np.array([[array[17][0]],[array[17][1]]])    #17 -> 15
-            _20_to_16 = np.array([[array[16][0]],[array[16][1]]]) - np.array([[array[20][0]],[array[20][1]]])    #20 -> 16
-            _19_to_15 = np.array([[array[15][0]],[array[15][1]]]) - np.array([[array[19][0]],[array[19][1]]])    #19 -> 15
-            _22_to_16 = np.array([[array[16][0]],[array[16][1]]]) - np.array([[array[22][0]],[array[22][1]]])    #22 -> 16
-            _21_to_15 = np.array([[array[15][0]],[array[15][1]]]) - np.array([[array[21][0]],[array[21][1]]])    #21 -> 15
-            _24_to_12 = np.array([[array[12][0]],[array[12][1]]]) - np.array([[array[24][0]],[array[24][1]]])    #24 -> 12
-            _23_to_11 = np.array([[array[11][0]],[array[11][1]]]) - np.array([[array[23][0]],[array[23][1]]])    #23 -> 11
-            _23_to_24 = np.array([[array[24][0]],[array[24][1]]]) - np.array([[array[23][0]],[array[23][1]]])    #23 -> 24
-            _26_to_24 = np.array([[array[24][0]],[array[24][1]]]) - np.array([[array[26][0]],[array[26][1]]])    #26 -> 24
-            _25_to_23 = np.array([[array[23][0]],[array[23][1]]]) - np.array([[array[25][0]],[array[25][1]]])    #25 -> 23
-            _28_to_26 = np.array([[array[26][0]],[array[26][1]]]) - np.array([[array[28][0]],[array[28][1]]])    #28 -> 26
-            _27_to_25 = np.array([[array[25][0]],[array[25][1]]]) - np.array([[array[27][0]],[array[27][1]]])    #27 -> 25
-            _30_to_28 = np.array([[array[28][0]],[array[28][1]]]) - np.array([[array[30][0]],[array[30][1]]])    #30 -> 28
-            _29_to_27 = np.array([[array[27][0]],[array[27][1]]]) - np.array([[array[29][0]],[array[29][1]]])    #29 -> 27
-            _32_to_28 = np.array([[array[28][0]],[array[28][1]]]) - np.array([[array[32][0]],[array[32][1]]])    #32 -> 28
-            _31_to_27 = np.array([[array[27][0]],[array[27][1]]]) - np.array([[array[31][0]],[array[31][1]]])    #31 -> 27
+            _11_to_12 = np.array([array[12][0],array[12][1]]) - np.array([array[11][0],array[11][1]])    #11 -> 12    
+            _14_to_12 = np.array([array[12][0],array[12][1]]) - np.array([array[14][0],array[14][1]])    #14 -> 12
+            _13_to_11 = np.array([array[11][0],array[11][1]]) - np.array([array[13][0],array[13][1]])    #13 -> 11
+            _16_to_14 = np.array([array[14][0],array[14][1]]) - np.array([array[16][0],array[16][1]])    #16 -> 14
+            _15_to_13 = np.array([array[13][0],array[13][1]]) - np.array([array[15][0],array[15][1]])    #15 -> 13
+            _18_to_16 = np.array([array[16][0],array[16][1]]) - np.array([array[18][0],array[18][1]])    #18 -> 16
+            _17_to_15 = np.array([array[15][0],array[15][1]]) - np.array([array[17][0],array[17][1]])    #17 -> 15
+            _20_to_16 = np.array([array[16][0],array[16][1]]) - np.array([array[20][0],array[20][1]])    #20 -> 16
+            _19_to_15 = np.array([array[15][0],array[15][1]]) - np.array([array[19][0],array[19][1]])    #19 -> 15
+            _22_to_16 = np.array([array[16][0],array[16][1]]) - np.array([array[22][0],array[22][1]])    #22 -> 16
+            _21_to_15 = np.array([array[15][0],array[15][1]]) - np.array([array[21][0],array[21][1]])    #21 -> 15
+            _24_to_12 = np.array([array[12][0],array[12][1]]) - np.array([array[24][0],array[24][1]])    #24 -> 12
+            _23_to_11 = np.array([array[11][0],array[11][1]]) - np.array([array[23][0],array[23][1]])    #23 -> 11
+            _23_to_24 = np.array([array[24][0],array[24][1]]) - np.array([array[23][0],array[23][1]])    #23 -> 24
+            _26_to_24 = np.array([array[24][0],array[24][1]]) - np.array([array[26][0],array[26][1]])    #26 -> 24
+            _25_to_23 = np.array([array[23][0],array[23][1]]) - np.array([array[25][0],array[25][1]])    #25 -> 23
+            _28_to_26 = np.array([array[26][0],array[26][1]]) - np.array([array[28][0],array[28][1]])    #28 -> 26
+            _27_to_25 = np.array([array[25][0],array[25][1]]) - np.array([array[27][0],array[27][1]])    #27 -> 25
+            _30_to_28 = np.array([array[28][0],array[28][1]]) - np.array([array[30][0],array[30][1]])    #30 -> 28
+            _29_to_27 = np.array([array[27][0],array[27][1]]) - np.array([array[29][0],array[29][1]])    #29 -> 27
+            _32_to_28 = np.array([array[28][0],array[28][1]]) - np.array([array[32][0],array[32][1]])    #32 -> 28
+            _31_to_27 = np.array([array[27][0],array[27][1]]) - np.array([array[31][0],array[31][1]])    #31 -> 27
 
 
             # print("1",_11_to_12)
@@ -150,56 +152,63 @@ def tracking(cap) :
 
 
             #l2 정규화 후 초기화
-            l2_11_to_12 = np.array([l2normalize(_11_to_12[0], _11_to_12[1])])    #11 -> 12    
-            l2_14_to_12 = np.array([l2normalize(_14_to_12[0], _14_to_12[1])])    #14 -> 12
-            l2_13_to_11 = np.array([l2normalize(_13_to_11[0], _13_to_11[1])])    #13 -> 11
-            l2_16_to_14 = np.array([l2normalize(_16_to_14[0], _16_to_14[1])])    #16 -> 14
-            l2_15_to_13 = np.array([l2normalize(_15_to_13[0], _15_to_13[1])])    #15 -> 13
-            l2_18_to_16 = np.array([l2normalize(_18_to_16[0], _18_to_16[1])])    #18 -> 16
-            l2_17_to_15 = np.array([l2normalize(_17_to_15[0], _17_to_15[1])])    #17 -> 15
-            l2_20_to_16 = np.array([l2normalize(_20_to_16[0], _20_to_16[1])])    #20 -> 16
-            l2_19_to_15 = np.array([l2normalize(_19_to_15[0], _19_to_15[1])])    #19 -> 15
-            l2_22_to_16 = np.array([l2normalize(_22_to_16[0], _22_to_16[1])])    #22 -> 16
-            l2_21_to_15 = np.array([l2normalize(_21_to_15[0], _21_to_15[1])])    #21 -> 15
-            l2_24_to_12 = np.array([l2normalize(_24_to_12[0], _24_to_12[1])])    #24 -> 12
-            l2_23_to_11 = np.array([l2normalize(_23_to_11[0], _23_to_11[1])])    #23 -> 11
-            l2_23_to_24 = np.array([l2normalize(_23_to_24[0], _23_to_24[1])])    #23 -> 24
-            l2_26_to_24 = np.array([l2normalize(_26_to_24[0], _26_to_24[1])])    #26 -> 24
-            l2_25_to_23 = np.array([l2normalize(_25_to_23[0], _25_to_23[1])])    #25 -> 23
-            l2_28_to_26 = np.array([l2normalize(_28_to_26[0], _28_to_26[1])])    #28 -> 26
-            l2_27_to_25 = np.array([l2normalize(_27_to_25[0], _27_to_25[1])])    #27 -> 25
-            l2_30_to_28 = np.array([l2normalize(_30_to_28[0], _30_to_28[1])])    #30 -> 28
-            l2_29_to_27 = np.array([l2normalize(_29_to_27[0], _29_to_27[1])])    #29 -> 27
-            l2_32_to_28 = np.array([l2normalize(_32_to_28[0], _32_to_28[1])])    #32 -> 28
-            l2_31_to_27 = np.array([l2normalize(_31_to_27[0], _31_to_27[1])])    #31 -> 27
+            l2_11_to_12 = np.array(l2normalize(_11_to_12[0], _11_to_12[1]))    #11 -> 12    
+            l2_14_to_12 = np.array(l2normalize(_14_to_12[0], _14_to_12[1]))    #14 -> 12
+            l2_13_to_11 = np.array(l2normalize(_13_to_11[0], _13_to_11[1]))    #13 -> 11
+            l2_16_to_14 = np.array(l2normalize(_16_to_14[0], _16_to_14[1]))    #16 -> 14
+            l2_15_to_13 = np.array(l2normalize(_15_to_13[0], _15_to_13[1]))    #15 -> 13
+            l2_18_to_16 = np.array(l2normalize(_18_to_16[0], _18_to_16[1]))    #18 -> 16
+            l2_17_to_15 = np.array(l2normalize(_17_to_15[0], _17_to_15[1]))    #17 -> 15
+            l2_20_to_16 = np.array(l2normalize(_20_to_16[0], _20_to_16[1]))    #20 -> 16
+            l2_19_to_15 = np.array(l2normalize(_19_to_15[0], _19_to_15[1]))    #19 -> 15
+            l2_22_to_16 = np.array(l2normalize(_22_to_16[0], _22_to_16[1]))    #22 -> 16
+            l2_21_to_15 = np.array(l2normalize(_21_to_15[0], _21_to_15[1]))    #21 -> 15
+            l2_24_to_12 = np.array(l2normalize(_24_to_12[0], _24_to_12[1]))    #24 -> 12
+            l2_23_to_11 = np.array(l2normalize(_23_to_11[0], _23_to_11[1]))    #23 -> 11
+            l2_23_to_24 = np.array(l2normalize(_23_to_24[0], _23_to_24[1]))    #23 -> 24
+            l2_26_to_24 = np.array(l2normalize(_26_to_24[0], _26_to_24[1]))    #26 -> 24
+            l2_25_to_23 = np.array(l2normalize(_25_to_23[0], _25_to_23[1]))    #25 -> 23
+            l2_28_to_26 = np.array(l2normalize(_28_to_26[0], _28_to_26[1]))    #28 -> 26
+            l2_27_to_25 = np.array(l2normalize(_27_to_25[0], _27_to_25[1]))    #27 -> 25
+            l2_30_to_28 = np.array(l2normalize(_30_to_28[0], _30_to_28[1]))    #30 -> 28
+            l2_29_to_27 = np.array(l2normalize(_29_to_27[0], _29_to_27[1]))    #29 -> 27
+            l2_32_to_28 = np.array(l2normalize(_32_to_28[0], _32_to_28[1]))    #32 -> 28
+            l2_31_to_27 = np.array(l2normalize(_31_to_27[0], _31_to_27[1]))    #31 -> 27
 
 
-            print("11 -> 12", l2_11_to_12)
-            print("14 -> 12", l2_14_to_12)
-            print("13 -> 11", l2_13_to_11)
-            print("16 -> 14", l2_16_to_14)
-            print("15 -> 13", l2_15_to_13)
-            print("18 -> 16", l2_18_to_16)
-            print("17 -> 15", l2_17_to_15)
-            print("20 -> 16", l2_20_to_16)
-            print("19 -> 15", l2_19_to_15)
-            print("22 -> 16", l2_22_to_16)
-            print("21 -> 15", l2_21_to_15)
-            print("24 -> 12", l2_24_to_12)
-            print("23 -> 11", l2_23_to_11)
-            print("23 -> 24", l2_23_to_24)
-            print("26 -> 24", l2_26_to_24)
-            print("25 -> 23", l2_25_to_23)
-            print("28 -> 26", l2_28_to_26)
-            print("27 -> 25", l2_27_to_25)
-            print("30 -> 28", l2_30_to_28)
-            print("29 -> 27", l2_29_to_27)
-            print("32 -> 28", l2_32_to_28)
-            print("31 -> 27", l2_31_to_27)
+            
+            # print("11 -> 12", l2_11_to_12)
+            # print("14 -> 12", l2_14_to_12)
+            # print("13 -> 11", l2_13_to_11)
+            # print("16 -> 14", l2_16_to_14)
+            # print("15 -> 13", l2_15_to_13)
+            # print("18 -> 16", l2_18_to_16)
+            # print("17 -> 15", l2_17_to_15)
+            # print("20 -> 16", l2_20_to_16)
+            # print("19 -> 15", l2_19_to_15)
+            # print("22 -> 16", l2_22_to_16)
+            # print("21 -> 15", l2_21_to_15)
+            # print("24 -> 12", l2_24_to_12)
+            # print("23 -> 11", l2_23_to_11)
+            # print("23 -> 24", l2_23_to_24)
+            # print("26 -> 24", l2_26_to_24)
+            # print("25 -> 23", l2_25_to_23)
+            # print("28 -> 26", l2_28_to_26)
+            # print("27 -> 25", l2_27_to_25)
+            # print("30 -> 28", l2_30_to_28)
+            # print("29 -> 27", l2_29_to_27)
+            # print("32 -> 28", l2_32_to_28)
+            # print("31 -> 27", l2_31_to_27)
 
 
 
+            def cos_sim(a, b):      #코사인 유사도
+                return dot(a, b) / (norm(a) * norm(b))
 
+            cs1 = cos_sim(l2_11_to_12, l2_14_to_12)     #11 -> 12 와 13 -> 11의 코사인 유사도
+            cs2 = cos_sim(l2_11_to_12, l2_13_to_11)
+            print("1 : ", cs1)
+            print("2 : ", cs2)
 
 
             
