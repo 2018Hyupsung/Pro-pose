@@ -12,6 +12,7 @@ def tracking(cap) :
     toe = 0     # 왼쪽 발 끝(results.pose_landmarks.landmark[31].y)
     image_height = 0
     image_weight = 0
+    center = 0
 
 
     with mediapipe_pose.Pose(
@@ -57,14 +58,20 @@ def tracking(cap) :
                 
                 landmark_drawing_spec = mediapipe_drawing_styles.get_default_pose_landmarks_style(),
                 connection_drawing_spec = mediapipe_drawing.DrawingSpec(color=(0,255,0), thickness=5)
-                )
+                ) 
             
+
             #영상 crop을 위해 높이에 대한 대략적인 정보를 보관합니다.
             if (results.pose_landmarks.landmark[0].y > top) :
                 top = round(results.pose_landmarks.landmark[0].y * image_height)
             if (results.pose_landmarks.landmark[31].y > toe) :
                 toe = round(results.pose_landmarks.landmark[31].y * image_height)
+            if ((results.pose_landmarks.landmark[24].x * image_weight + results.pose_landmarks.landmark[23].x * image_weight)/2 > center) :
+                center = round((results.pose_landmarks.landmark[24].x * image_weight + results.pose_landmarks.landmark[23].x * image_weight)/2)
             
+            mediapipe_drawing.plot_landmarks(
+                image
+            )
 
             # 보기 편하게 이미지를 좌우 반전합니다. -> 영상은 좌우 반전 금지
             # 실제 사용에서는 성능향상을 목적으로 미리보기를 차단합니다.
@@ -72,5 +79,5 @@ def tracking(cap) :
             if cv2.waitKey(5) & 0xFF == ord('q'):
                 break
 
-    print("최고 : ", top, ", 최저 : ", toe)
-    return top, toe, image_weight
+    print("최고 : ", top, ", 최저 : ", toe, " ", center)
+    return top, toe, center
