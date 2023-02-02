@@ -1,5 +1,0 @@
-public void main(String [] args){
-    System.out.println("cex");
-    System.out.println("sex");
-    System.out.println("sex");
-}
