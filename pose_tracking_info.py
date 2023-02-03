@@ -1,3 +1,4 @@
+import json
 import numpy as np
 from numpy.linalg import norm
 import math
@@ -7,26 +8,21 @@ from media_pipe_module import mediapipe_drawing_styles
 from media_pipe_module import mediapipe_pose
 
 
-
-
-def tracking(cap) :
+def tracking_info(cap) :
     array = [[0]*2 for i in range(33)]      #각 랜드마크별 xy좌표 저장 공간
     connects = []   #랜드마크 사이 연결선용
 
     _, image = cap.read()
     height, weight, _ = image.shape
 
-    normal = 'color=(0,255,0), thickness = 5'
-    
-
     with mediapipe_pose.Pose(
         min_detection_confidence = 0.5,     #사람이라고 간주할 수 있는 모델의 최소 신뢰값입니다.
         min_tracking_confidence = 0.5,      #포즈의 랜드마크를 추적할 수 있는 모델의 최소 신뢰값입니다.
         model_complexity = 1,               #포즈 랜드마크 모델의 복합성입니다.
         ) as pose :
+       
 
-        
-        while cap.isOpened() :
+       while cap.isOpened() :
             success, image = cap.read()
 
             if not success :
@@ -38,9 +34,6 @@ def tracking(cap) :
             image.flags.writeable = False
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             results = pose.process(image)
-
-
-
 
             # 모든 랜드마크를 벡터화합니다.
             for idx, land in enumerate(results.pose_landmarks.landmark):
@@ -69,10 +62,6 @@ def tracking(cap) :
 
 
 
-
-
-
-
             # L2 정규화
             # 단순성을 위한 L2 정규화 : https://codingrabbit.tistory.com/21
             # 정규화 : https://light-tree.tistory.com/125
@@ -97,67 +86,5 @@ def tracking(cap) :
             L2_La_Lk = np.array(L2normalize(La_Lk[0], La_Lk[1]))            #27 -> 25
 
 
-            def cos_sim(a, b):      #코사인 유사도
-                return np.dot(a, b) / (norm(a) * norm(b))
-
-            cs1 = cos_sim(L2_Le_Ls, L2_Re_Rs)
-            #cs2 = cos_sim(l2_11_to_12, l2_13_to_11)
-
-
-
-            # 포즈 주석을 이미지 위에 그립니다.
-            """
-            drawing_utils.py
-            line 157다음
-            if idx in [0,1,2,3,4,5,6,7,8,9,10,17,18,19,20,21,22,29,30,31,32]:
-                continue
-            추가로 특정 랜드마크의 생성을 무시합니다.
-            """
-            image.flags.writeable = True
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
-            '''
-            mediapipe_drawing.draw_landmarks(
-                image,
-                results.pose_landmarks,
-                mediapipe_pose.POSE_CONNECTIONS,
-                
-                #drawing_styles.py에서
-                #get_default_pose_landmarks_style()의 속성을 변경합니다.
-                
-                #landmark_drawing_spec = mediapipe_drawing.DrawingSpec(color = (0,0,0), thickness = 8),
-                #connection_drawing_spec = mediapipe_drawing.DrawingSpec(color=(0,255,0), thickness = 5),                                                             
-                )
-            '''
-            '''
-            cv2.line(
-                image,
-                (connects[0][0], connects[0][1]),
-                (connects[1][0], connects[1][1]),
-                color = (255,0,0),
-                thickness = 8
-            )
-            '''
-            cv2.line(
-                image,
-                (array[11][0], array[12][1]),
-                (array[12][0], array[12][1]),
-                color = (255,0,0),
-                thickness = 7
-            )
-
-            if(cs1 < 0.7) :     #코사인 유사도가 70% 이하일 때
-                cv2.line(
-                image,
-                (array[12][0], array[12][1]),
-                (array[14][0], array[14][1]),
-                color = (0,0,255),
-                thickness = 7
-            )
-            
-
-            # 보기 편하게 이미지를 좌우 반전합니다. -> 영상은 좌우 반전 금지
-            # 실제 사용에서는 성능향상을 목적으로 미리보기를 차단합니다.
-            cv2.imshow('Pose_Check', image)
-            if cv2.waitKey(5) & 0xFF == ord('q'):
-                break
+            json_data = json.dump(L2_Ls_Rs)
+            print(json_data)
