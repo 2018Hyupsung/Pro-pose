@@ -162,7 +162,7 @@ def tracking_info(cap, frames, instructor) :
 
     data_frame = pd.DataFrame(L2_landmarks, columns = cols)
     data_frame = data_frame.astype(float).round(8)
-    data_frame.to_csv('./csv/'+instructor+'.csv', na_rep='None')
+    data_frame.to_csv('./csv/'+instructor+'_15fps_.csv', na_rep='None')
 
 
             

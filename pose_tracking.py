@@ -33,8 +33,7 @@ def tracking(ins_info, cap) :
     ins_info_idx = 0
 
     array = [[0]*2 for j in range(33)]      # (학생)각 랜드마크별 xy좌표 저장 공간
-    scores = np.zeros(33)
-    cos_sims = []
+    scores = np.zeros(12)
     #(공통) 랜드마크 간 연결 리스트
     connects_list = [[11, 12], [14, 12], [13, 11], [16, 14], [15, 13], 
                      [24, 12], [23, 11], [23, 24], [26, 24], [25, 23], [28, 26], [27, 25]]
@@ -58,14 +57,14 @@ def tracking(ins_info, cap) :
     # 코사인유사도 (-1 ~ 1)
     def cos_sim(a, b):
         if((a[0] is None) or (b[0] is None)) :
-            return -1
+            return -2
         return np.dot(a, b) / (norm(a) * norm(b))
     
 
     # 유클리드 거리 (0 ~ 2)
     def euclid(cos) :
-        if (cos is None) :
-            return None
+        if (cos == -2) :
+            return np.nan
         if (2.0 * (1.0 - cos) < 0) :
             return 0
         return math.sqrt(2.0 * (1.0 - cos))
@@ -73,8 +72,8 @@ def tracking(ins_info, cap) :
 
     # score
     def score(euc) :
-        if (euc == None) :
-            return -1
+        if (euc == np.nan) :
+            return np.nan
         return 100 - (100 * (0.5 * euc))
 
 
@@ -262,7 +261,7 @@ def tracking(ins_info, cap) :
             
             ins_info_idx += 1
 
-            '''
+            
             print('Ls_Rs : ',scores[0],'%')
             print('Re_Rs : ',scores[1],'%')
             print('Le_Ls : ',scores[2],'%')
@@ -275,15 +274,15 @@ def tracking(ins_info, cap) :
             print('Lk_Lh : ',scores[9],'%')
             print('Ra_Rk : ',scores[10],'%')
             print('La_Lk : ',scores[11],'%')
-            print('Overall : ', sum(scores)/12,'%')
-            '''
+            print('Overall : ', np.nanmean(scores),'%')
+            
 
             #cv2 - 랜드마크 선 표현
-            for i in connects_list :
+            for s_idx, i in enumerate(connects_list) :
                 if array[i[0]][0] is not None and array[i[0]][1] is not None and array[i[1]][0] is not None and array[i[1]][1] is not None:
-                    if results.pose_landmarks.landmark[i[0]].visibility >= 0.97 and results.pose_landmarks.landmark[i[1]].visibility >= 0.97:
+                    if scores[s_idx] == 100.0 :
                         color = (255, 0, 0)
-                    elif results.pose_landmarks.landmark[i[0]].visibility >= 0.95 and results.pose_landmarks.landmark[i[1]].visibility >= 0.95:
+                    elif scores[s_idx] > 99.0 :
                         color = (0, 255, 0)
                     else:
                         color = (0, 0, 255)

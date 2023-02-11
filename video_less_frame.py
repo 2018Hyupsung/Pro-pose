@@ -2,12 +2,36 @@ import ffmpeg
 from ffprobe import FFProbe
 from math import trunc
 
-def less_frame(vid,mp4) :
-    out_name = vid + '_15fps_' + mp4
-    frames = 0
-    durations = 0
-    fps = 0
 
+
+
+
+def get_vid_info(vid) :
+    
+    metadata=FFProbe(vid)
+
+    for stream in metadata.streams:
+        if stream.is_video():
+            frames = stream.frames()
+            durations = trunc(stream.duration_seconds())
+            fps = round(frames / durations)
+            print('총 프레임 : {} frames.'.format(frames))
+            print('총 재생시간 : {} seconds.'.format(durations))
+            print('fps : {} frames/s.'.format(fps))
+
+    return frames
+
+
+
+
+
+
+
+
+def less_frame(vid, mp4) :
+
+    out_name = vid + '_15fps_' + mp4
+    
     metadata=FFProbe(vid+mp4)
 
     for stream in metadata.streams:
@@ -15,13 +39,9 @@ def less_frame(vid,mp4) :
             frames = stream.frames()
             durations = trunc(stream.duration_seconds())
             fps = round(frames / durations)
-            print('{} frames.'.format(frames))
-            print('{} seconds.'.format(durations))
-            print('{} frames/s.'.format(fps))
-    
+
     #15프레임으로 드롭
     durations = trunc(durations * 15 / fps)
-    print('new vid''s durations = {}'.format(durations))
 
     (
     ffmpeg
@@ -33,16 +53,5 @@ def less_frame(vid,mp4) :
     .run()
     )
     
-    metadata=FFProbe(out_name)
 
-    for stream in metadata.streams:
-        if stream.is_video():
-            frames = stream.frames()
-            durations = trunc(stream.duration_seconds())
-            fps = round(frames / durations)
-            print('{} frames.'.format(frames))
-            print('{} seconds.'.format(durations))
-            print('{} frames/s.'.format(fps))
-
-
-    return out_name, frames
+    return out_name
