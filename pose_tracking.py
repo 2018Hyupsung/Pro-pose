@@ -31,8 +31,8 @@ def read_ins_info(csv_path, instructor, info) :
 
 def tracking(ins_info, stu_info, cap) :
 
+    
     dtw_array_count = 0
-
     array = [[0]*2 for j in range(33)]      # (학생)각 랜드마크별 xy좌표 저장 공간
     scores = np.zeros(12)
     #(공통) 랜드마크 간 연결 리스트
@@ -150,6 +150,7 @@ def tracking(ins_info, stu_info, cap) :
             image.flags.writeable = True
             #image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             results = pose.process(image)
+            
 
             try:
                 results.pose_landmarks.landmark
@@ -240,36 +241,55 @@ def tracking(ins_info, stu_info, cap) :
             ins_dtw_info = [[] for i in range(12)]
             stu_dtw_info = [[] for i in range(12)]
             #각 랜드마크 벡터를 dtw를 7프레임마다 계산
-            for i in range(dtw_array_count, dtw_array_count + 60):
-                ins_dtw_info[0].append(np.array([ins_info[dtw_array_count][0], ins_info[dtw_array_count][1]]))
-                stu_dtw_info[0].append(np.array([stu_info[dtw_array_count][0], stu_info[dtw_array_count][1]]))
-                ins_dtw_info[1].append(np.array([ins_info[dtw_array_count][2], ins_info[dtw_array_count][3]]))
-                stu_dtw_info[1].append(np.array([stu_info[dtw_array_count][2], stu_info[dtw_array_count][3]]))
-                ins_dtw_info[2].append(np.array([ins_info[dtw_array_count][4], ins_info[dtw_array_count][5]]))
-                stu_dtw_info[2].append(np.array([stu_info[dtw_array_count][4], stu_info[dtw_array_count][5]]))
-                ins_dtw_info[3].append(np.array([ins_info[dtw_array_count][6], ins_info[dtw_array_count][7]]))
-                stu_dtw_info[3].append(np.array([stu_info[dtw_array_count][6], stu_info[dtw_array_count][7]]))
-                ins_dtw_info[4].append(np.array([ins_info[dtw_array_count][8], ins_info[dtw_array_count][9]]))
-                stu_dtw_info[4].append(np.array([stu_info[dtw_array_count][8], stu_info[dtw_array_count][9]]))
-                ins_dtw_info[5].append(np.array([ins_info[dtw_array_count][10], ins_info[dtw_array_count][11]]))
-                stu_dtw_info[5].append(np.array([stu_info[dtw_array_count][10], stu_info[dtw_array_count][11]]))
-                ins_dtw_info[6].append(np.array([ins_info[dtw_array_count][12], ins_info[dtw_array_count][13]]))
-                stu_dtw_info[6].append(np.array([stu_info[dtw_array_count][12], stu_info[dtw_array_count][13]]))
-                ins_dtw_info[7].append(np.array([ins_info[dtw_array_count][14], ins_info[dtw_array_count][15]]))
-                stu_dtw_info[7].append(np.array([stu_info[dtw_array_count][14], stu_info[dtw_array_count][15]]))
-                ins_dtw_info[8].append(np.array([ins_info[dtw_array_count][16], ins_info[dtw_array_count][17]]))
-                stu_dtw_info[8].append(np.array([stu_info[dtw_array_count][16], stu_info[dtw_array_count][17]]))
-                ins_dtw_info[9].append(np.array([ins_info[dtw_array_count][18], ins_info[dtw_array_count][19]]))
-                stu_dtw_info[9].append(np.array([stu_info[dtw_array_count][18], stu_info[dtw_array_count][19]]))
-                ins_dtw_info[10].append(np.array([ins_info[dtw_array_count][20], ins_info[dtw_array_count][21]]))
-                stu_dtw_info[10].append(np.array([stu_info[dtw_array_count][20], stu_info[dtw_array_count][21]]))
-                ins_dtw_info[11].append(np.array([ins_info[dtw_array_count][22], ins_info[dtw_array_count][23]]))
-                stu_dtw_info[11].append(np.array([stu_info[dtw_array_count][22], stu_info[dtw_array_count][23]]))
+            for i in range(dtw_array_count, dtw_array_count + 25):
+                
+                # if ins_info[dtw_array_count][0] == None:
+                #     ins_info[dtw_array_count][0] = ins_info[0][0]
+                    
+                # if ins_info[dtw_array_count][1] == None:
+                #     ins_info[dtw_array_count][1] = ins_info[0][1]
 
+                ins_dtw_info[0].append(np.array([ins_info[i][0], ins_info[i][1]]))
+                stu_dtw_info[0].append(np.array([stu_info[i][0], stu_info[i][1]]))
+                ins_dtw_info[1].append(np.array([ins_info[i][2], ins_info[i][3]]))
+                stu_dtw_info[1].append(np.array([stu_info[i][2], stu_info[i][3]]))
+                ins_dtw_info[2].append(np.array([ins_info[i][4], ins_info[i][5]]))
+                stu_dtw_info[2].append(np.array([stu_info[i][4], stu_info[i][5]]))
+                ins_dtw_info[3].append(np.array([ins_info[i][6], ins_info[i][7]]))
+                stu_dtw_info[3].append(np.array([stu_info[i][6], stu_info[i][7]]))
+                ins_dtw_info[4].append(np.array([ins_info[i][8], ins_info[i][9]]))
+                stu_dtw_info[4].append(np.array([stu_info[i][8], stu_info[i][9]]))
+                ins_dtw_info[5].append(np.array([ins_info[i][10], ins_info[i][11]]))
+                stu_dtw_info[5].append(np.array([stu_info[i][10], stu_info[i][11]]))
+                ins_dtw_info[6].append(np.array([ins_info[i][12], ins_info[i][13]]))
+                stu_dtw_info[6].append(np.array([stu_info[i][12], stu_info[i][13]]))
+                ins_dtw_info[7].append(np.array([ins_info[i][14], ins_info[i][15]]))
+                stu_dtw_info[7].append(np.array([stu_info[i][14], stu_info[i][15]]))
+                ins_dtw_info[8].append(np.array([ins_info[i][16], ins_info[i][17]]))
+                stu_dtw_info[8].append(np.array([stu_info[i][16], stu_info[i][17]]))
+                ins_dtw_info[9].append(np.array([ins_info[i][18], ins_info[i][19]]))
+                stu_dtw_info[9].append(np.array([stu_info[i][18], stu_info[i][19]]))
+                ins_dtw_info[10].append(np.array([ins_info[i][20], ins_info[i][21]]))
+                stu_dtw_info[10].append(np.array([stu_info[i][20], stu_info[i][21]]))
+                ins_dtw_info[11].append(np.array([ins_info[i][22], ins_info[i][23]]))
+                stu_dtw_info[11].append(np.array([stu_info[i][22], stu_info[i][23]]))
+            
+            dtw_array_count += 1
 
             for i in range(12):
                 scores[i] = dtw.distance(ins_dtw_info[i], stu_dtw_info[i], window=3)
-            print("score", scores[0])
+            print("score0", scores[0])
+            print("score1", scores[1])
+            print("score2", scores[2])
+            print("score3", scores[3])
+            print("score4", scores[4])
+            print("score0", scores[5])
+            print("score1", scores[6])
+            print("score2", scores[7])
+            print("score3", scores[8])
+            print("score4", scores[9])
+            print("score0", scores[10])
+            print("score1", scores[11])
             
             # 코사인 유사도 및 유클리드 거리
             # cs1 = euclid(cos_sim(np.array([ins_info[ins_info_idx][0], ins_info[ins_info_idx][1]]), np.array([stu_info[stu_info_idx][0], stu_info[stu_info_idx][1]])))
@@ -297,7 +317,7 @@ def tracking(ins_info, stu_info, cap) :
             # cs12 = euclid(cos_sim(np.array([ins_info[ins_info_idx][22], ins_info[ins_info_idx][23]]), L2_La_Lk))
             # scores[11] = score(cs12)
             
-            dtw_array_count += 1
+            
 
             
             # print('Ls_Rs : ',scores[0],'%')
@@ -318,9 +338,9 @@ def tracking(ins_info, stu_info, cap) :
             #cv2 - 랜드마크 선 표현
             for s_idx, i in enumerate(connects_list) :
                 if array[i[0]][0] is not None and array[i[0]][1] is not None and array[i[1]][0] is not None and array[i[1]][1] is not None:
-                    if scores[s_idx] < 10 :
+                    if scores[s_idx] < 5 :
                         color = (255, 0, 0)
-                    elif scores[s_idx] < 35 :
+                    elif scores[s_idx] < 15 :
                         color = (0, 255, 0)
                     else:
                         color = (0, 0, 255)
@@ -331,8 +351,6 @@ def tracking(ins_info, stu_info, cap) :
                     color = color,
                     thickness = 7
                     )
-
-
 
 
             cv2.imshow('Pro-pose', image)

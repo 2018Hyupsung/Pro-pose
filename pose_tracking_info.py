@@ -32,7 +32,7 @@ def tracking_info(cap, frames, instructor) :
     # 각 영상에서 두 랜드마크 사이의 벡터를 단위벡터로 표현.
     def L2normalize(x, y):
         if (x and y) == 0:
-            return 0, 0
+            return 0.0, 0.0
         if ((x or y) == None) :
             return None, None
         result = math.sqrt(x**2 + y**2)
@@ -81,7 +81,7 @@ def tracking_info(cap, frames, instructor) :
             try:
                 results.pose_landmarks.landmark
             except AttributeError:
-                L2_landmarks[l2_idx][0], L2_landmarks[l2_idx][1] = None, None             #11 -> 12    
+                L2_landmarks[l2_idx][0], L2_landmarks[l2_idx][1] = None, None            #11 -> 12    
                 L2_landmarks[l2_idx][2], L2_landmarks[l2_idx][3] = None, None            #14 -> 12
                 L2_landmarks[l2_idx][4], L2_landmarks[l2_idx][5] = None, None            #13 -> 11
                 L2_landmarks[l2_idx][6], L2_landmarks[l2_idx][7] = None, None            #16 -> 14
@@ -165,7 +165,7 @@ def tracking_info(cap, frames, instructor) :
             
            
             # L2 정규화
-            L2_landmarks[l2_idx][0], L2_landmarks[l2_idx][1] = L2normalize(Ls_Rs[0], Ls_Rs[1])             #11 -> 12    
+            L2_landmarks[l2_idx][0], L2_landmarks[l2_idx][1] = L2normalize(Ls_Rs[0], Ls_Rs[1])            #11 -> 12    
             L2_landmarks[l2_idx][2], L2_landmarks[l2_idx][3] = L2normalize(Re_Rs[0], Re_Rs[1])            #14 -> 12
             L2_landmarks[l2_idx][4], L2_landmarks[l2_idx][5] = L2normalize(Le_Ls[0], Le_Ls[1])            #13 -> 11
             L2_landmarks[l2_idx][6], L2_landmarks[l2_idx][7] = L2normalize(Rw_Re[0], Rw_Re[1])            #16 -> 14
