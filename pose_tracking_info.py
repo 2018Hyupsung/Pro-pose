@@ -24,7 +24,7 @@ La_Lk            #27 -> 25
 
 
 
-def tracking_info(cap, frames, instructor) :
+def tracking_info(cap, frames, original) :
 
     # L2 정규화
     # 단순성을 위한 L2 정규화 : https://codingrabbit.tistory.com/21
@@ -183,7 +183,7 @@ def tracking_info(cap, frames, instructor) :
 
     data_frame = pd.DataFrame(L2_landmarks, columns = cols)
     data_frame = data_frame.astype(float).round(8)
-    data_frame.to_csv('./csv/'+instructor+'_15fps_.csv', na_rep='None')
+    data_frame.to_csv('./csv/'+original+'_15fps_.csv', na_rep='None')
 
 
             

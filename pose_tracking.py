@@ -26,12 +26,26 @@ def read_ins_info(csv_path, instructor, info) :
     return data_frame
 
 
+# 코사인유사도 (-1 ~ 1)
+def cos_sim(a, b):      #코사인 유사도
+    if((a[0] is None) or (b[0] is None) or (a[1] is None) or (b[1] is None)) :
+        return -2
+    if((a[0] == 0 and a[1] == 0) or (b[0] == 0 and b[1] == 0)):
+        return -2
+    return np.dot(a, b) / (norm(a) * norm(b))
+    
 
+# 유클리드 거리 (0 ~ 2 // 1e9)
+def euclid(cos) :
+    if (cos == -2) :
+        return 1e9
+    if (2.0 * (1.0 - cos) < 0) :
+        return 0
+    return math.sqrt(2.0 * (1.0 - cos))
 
 
 def tracking(ins_info, stu_info, cap) :
 
-    
     dtw_array_count = 0
     array = [[0]*2 for j in range(33)]      # (학생)각 랜드마크별 xy좌표 저장 공간
     scores = np.zeros(12)
@@ -39,44 +53,13 @@ def tracking(ins_info, stu_info, cap) :
     connects_list = [[11, 12], [14, 12], [13, 11], [16, 14], [15, 13], 
                      [24, 12], [23, 11], [23, 24], [26, 24], [25, 23], [28, 26], [27, 25]]
 
-
-
-    # L2 정규화
-    # 단순성을 위한 L2 정규화 : https://codingrabbit.tistory.com/21
-    # 정규화 : https://light-tree.tistory.com/125
-    # 각 영상에서 두 랜드마크 사이의 벡터를 단위벡터로 표현.
-    def L2normalize(x, y):
-        if ((x or y) == None) :
-            return None, None
-        result = math.sqrt(x**2 + y**2)
-        _x = x / result
-        _y = y / result
-        return _x, _y
     
-
-
-    # 코사인유사도 (-1 ~ 1)
-    def cos_sim(a, b):
-        if((a[0] is None) or (b[0] is None)) :
-            return -2
-        return np.dot(a, b) / (norm(a) * norm(b))
-    
-
-    # 유클리드 거리 (0 ~ 2)
-    def euclid(cos) :
-        if (cos == -2) :
-            return np.nan
-        if (2.0 * (1.0 - cos) < 0) :
-            return 0
-        return math.sqrt(2.0 * (1.0 - cos))
-
 
     # score
     def score(euc) :
         if (euc == np.nan) :
             return np.nan
         return 100 - (100 * (0.5 * euc))
-
 
 
     _, image = cap.read()
@@ -170,85 +153,18 @@ def tracking(ins_info, stu_info, cap) :
 
                 array[idx][0] = land_x       # 해당 랜드마크의 x좌표입니다.
                 array[idx][1] = land_y       # 해당 랜드마크의 y좌표입니다.
-                
-            
-            # if((array[12][0] and array[12][1] and array[11][0] and array[11][1]) is not None) :
-            #     Ls_Rs = np.array([array[12][0],array[12][1]]) - np.array([array[11][0],array[11][1]])    #11 -> 12
-            # else :
-            #     Ls_Rs = np.array([None] * 2)    
-            # if((array[12][0] and array[12][1] and array[14][0] and array[14][1]) is not None) :
-            #     Re_Rs = np.array([array[12][0],array[12][1]]) - np.array([array[14][0],array[14][1]])    #14 -> 12
-            # else :
-            #     Re_Rs = np.array([None] * 2)   
-            # if((array[11][0] and array[11][1] and array[13][0] and array[13][1]) is not None) :
-            #     Le_Ls = np.array([array[11][0],array[11][1]]) - np.array([array[13][0],array[13][1]])    #13 -> 11
-            # else :
-            #     Le_Ls = np.array([None] * 2)   
-            # if((array[14][0] and array[14][1] and array[16][0] and array[16][1]) is not None) :
-            #     Rw_Re = np.array([array[14][0],array[14][1]]) - np.array([array[16][0],array[16][1]])    #16 -> 14
-            # else :
-            #     Rw_Re = np.array([None] * 2)   
-            # if((array[13][0] and array[13][1] and array[15][0] and array[15][1]) is not None) :
-            #     Lw_Le = np.array([array[13][0],array[13][1]]) - np.array([array[15][0],array[15][1]])    #15 -> 13
-            # else :
-            #     Lw_Le = np.array([None] * 2)   
-            # if((array[12][0] and array[12][1] and array[24][0] and array[24][1]) is not None) :
-            #     Rh_Rs = np.array([array[12][0],array[12][1]]) - np.array([array[24][0],array[24][1]])    #24 -> 12
-            # else :
-            #     Rh_Rs = np.array([None] * 2)   
-            # if((array[11][0] and array[11][1] and array[23][0] and array[23][1]) is not None) :
-            #     Lh_Ls = np.array([array[11][0],array[11][1]]) - np.array([array[23][0],array[23][1]])    #23 -> 11
-            # else :
-            #     Lh_Ls = np.array([None] * 2)   
-            # if((array[24][0] and array[24][1] and array[23][0] and array[23][1]) is not None) :
-            #     Lh_Rh = np.array([array[24][0],array[24][1]]) - np.array([array[23][0],array[23][1]])    #23 -> 24
-            # else :
-            #     Lh_Rh = np.array([None] * 2)   
-            # if((array[24][0] and array[24][1] and array[26][0] and array[26][1]) is not None) :
-            #     Rk_Rh = np.array([array[24][0],array[24][1]]) - np.array([array[26][0],array[26][1]])    #26 -> 24
-            # else :
-            #     Rk_Rh = np.array([None] * 2)   
-            # if((array[23][0] and array[23][1] and array[25][0] and array[25][1]) is not None) :
-            #     Lk_Lh = np.array([array[23][0],array[23][1]]) - np.array([array[25][0],array[25][1]])    #25 -> 23
-            # else :
-            #     Lk_Lh = np.array([None] * 2)   
-            # if((array[26][0] and array[26][1] and array[28][0] and array[28][1]) is not None) :
-            #     Ra_Rk = np.array([array[26][0],array[26][1]]) - np.array([array[28][0],array[28][1]])    #28 -> 26
-            # else :
-            #     Ra_Rk = np.array([None] * 2)   
-            # if((array[25][0] and array[25][1] and array[27][0] and array[27][1]) is not None) :
-            #     La_Lk = np.array([array[25][0],array[25][1]]) - np.array([array[27][0],array[27][1]])    #27 -> 25
-            # else :
-            #     La_Lk = np.array([None] * 2)   
 
 
-
-            # # L2 정규화
-            # L2_Ls_Rs = np.array(L2normalize(Ls_Rs[0], Ls_Rs[1]))            #11 -> 12    
-            # L2_Re_Rs = np.array(L2normalize(Re_Rs[0], Re_Rs[1]))            #14 -> 12
-            # L2_Le_Ls = np.array(L2normalize(Le_Ls[0], Le_Ls[1]))            #13 -> 11
-            # L2_Rw_Re = np.array(L2normalize(Rw_Re[0], Rw_Re[1]))            #16 -> 14
-            # L2_Lw_Le = np.array(L2normalize(Lw_Le[0], Lw_Le[1]))            #15 -> 13
-            # L2_Rh_Rs = np.array(L2normalize(Rh_Rs[0], Rh_Rs[1]))            #24 -> 12
-            # L2_Lh_Ls = np.array(L2normalize(Lh_Ls[0], Lh_Ls[1]))            #23 -> 11
-            # L2_Lh_Rh = np.array(L2normalize(Lh_Rh[0], Lh_Rh[1]))            #23 -> 24
-            # L2_Rk_Rh = np.array(L2normalize(Rk_Rh[0], Rk_Rh[1]))            #26 -> 24
-            # L2_Lk_Lh = np.array(L2normalize(Lk_Lh[0], Lk_Lh[1]))            #25 -> 23
-            # L2_Ra_Rk = np.array(L2normalize(Ra_Rk[0], Ra_Rk[1]))            #28 -> 26
-            # L2_La_Lk = np.array(L2normalize(La_Lk[0], La_Lk[1]))            #27 -> 25
 
 
             ins_dtw_info = [[] for i in range(12)]
             stu_dtw_info = [[] for i in range(12)]
-            #각 랜드마크 벡터를 dtw를 7프레임마다 계산
-            for i in range(dtw_array_count, dtw_array_count + 25):
-                
-                # if ins_info[dtw_array_count][0] == None:
-                #     ins_info[dtw_array_count][0] = ins_info[0][0]
-                    
-                # if ins_info[dtw_array_count][1] == None:
-                #     ins_info[dtw_array_count][1] = ins_info[0][1]
+            
+            #각 랜드마크 벡터의 dtw를 dtw_how프레임마다 계산
+            #15fps  현재(45 / 15) = 3초마다 계산
+            dtw_how = 45
 
+            for i in range(dtw_array_count, dtw_array_count + dtw_how):
                 ins_dtw_info[0].append(np.array([ins_info[i][0], ins_info[i][1]]))
                 stu_dtw_info[0].append(np.array([stu_info[i][0], stu_info[i][1]]))
                 ins_dtw_info[1].append(np.array([ins_info[i][2], ins_info[i][3]]))
@@ -276,20 +192,21 @@ def tracking(ins_info, stu_info, cap) :
             
             dtw_array_count += 1
 
+
             for i in range(12):
-                scores[i] = dtw.distance(ins_dtw_info[i], stu_dtw_info[i], window=3)
+                scores[i] = dtw.distance(ins_dtw_info[i], stu_dtw_info[i], window=4)
             print("score0", scores[0])
             print("score1", scores[1])
             print("score2", scores[2])
             print("score3", scores[3])
             print("score4", scores[4])
-            print("score0", scores[5])
-            print("score1", scores[6])
-            print("score2", scores[7])
-            print("score3", scores[8])
-            print("score4", scores[9])
-            print("score0", scores[10])
-            print("score1", scores[11])
+            print("score5", scores[5])
+            print("score6", scores[6])
+            print("score7", scores[7])
+            print("score8", scores[8])
+            print("score9", scores[9])
+            print("score10", scores[10])
+            print("score11", scores[11])
             
             # 코사인 유사도 및 유클리드 거리
             # cs1 = euclid(cos_sim(np.array([ins_info[ins_info_idx][0], ins_info[ins_info_idx][1]]), np.array([stu_info[stu_info_idx][0], stu_info[stu_info_idx][1]])))
@@ -338,9 +255,9 @@ def tracking(ins_info, stu_info, cap) :
             #cv2 - 랜드마크 선 표현
             for s_idx, i in enumerate(connects_list) :
                 if array[i[0]][0] is not None and array[i[0]][1] is not None and array[i[1]][0] is not None and array[i[1]][1] is not None:
-                    if scores[s_idx] < 5 :
+                    if scores[s_idx] < 20 :
                         color = (255, 0, 0)
-                    elif scores[s_idx] < 15 :
+                    elif scores[s_idx] < 40 :
                         color = (0, 255, 0)
                     else:
                         color = (0, 0, 255)
