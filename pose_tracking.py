@@ -145,7 +145,7 @@ def tracking(ins_info, stu_info, cap) :
                 if idx in [0,1,2,3,4,5,6,7,8,9,10,17,18,19,20,21,22,29,30,31,32]:
                     continue
                 
-                if (land.visibility < 0.8) :        # 랜드마크의 가시성 신뢰도가 80% 이하로 떨어지면 값을 None으로 변경합니다.
+                if (land.visibility < 0.3) :        # 랜드마크의 가시성 신뢰도가 80% 이하로 떨어지면 값을 None으로 변경합니다.
                     land_x = None
                     land_y = None
                 else : 
@@ -159,10 +159,21 @@ def tracking(ins_info, stu_info, cap) :
 
             ins_dtw_info = [[] for i in range(12)]
             stu_dtw_info = [[] for i in range(12)]
+<<<<<<< HEAD
             
             #각 랜드마크 벡터의 dtw를 dtw_how프레임마다 계산
             #15fps  현재(45 / 15) = 3초마다 계산
             dtw_how = 45
+=======
+            #각 랜드마크 벡터를 dtw를 25프레임마다 계산
+            for i in range(dtw_array_count, dtw_array_count + 20):
+                
+                # if ins_info[dtw_array_count][0] == None:
+                #     ins_info[dtw_array_count][0] = ins_info[0][0]
+                    
+                # if ins_info[dtw_array_count][1] == None:
+                #     ins_info[dtw_array_count][1] = ins_info[0][1]
+>>>>>>> 71d3d733df6adc252768b0bb7329967e81a388dc
 
             for i in range(dtw_array_count, dtw_array_count + dtw_how):
                 ins_dtw_info[0].append(np.array([ins_info[i][0], ins_info[i][1]]))

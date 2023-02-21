@@ -78,6 +78,7 @@ if already == False :
 ins_info = pose_tracking.read_ins_info(csv_path, instructor+less_finished,csv)    # csv파일을 불러들입니다.
 #-------------------------
 
+already = False
 
 #------------------------- 2-2.학습자 영상의 csv데이터를 찾고, 존재하지 않는다면 만들어줍니다.
 if (student+less_finished+csv) in csv_listdir:

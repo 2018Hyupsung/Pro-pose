@@ -102,7 +102,7 @@ def tracking_info(cap, frames, original) :
                 if idx in [0,1,2,3,4,5,6,7,8,9,10,17,18,19,20,21,22,29,30,31,32]:
                     continue
                 
-                if (land.visibility < 0.8) :        # 랜드마크의 가시성 신뢰도가 80% 이하로 떨어지면 값을 None으로 변경합니다.
+                if (land.visibility < 0.3) :        # 랜드마크의 가시성 신뢰도가 80% 이하로 떨어지면 값을 None으로 변경합니다.
                     land_x = None
                     land_y = None
                 else : 
