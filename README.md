@@ -1,6 +1,7 @@
 <div align="center">
   <h3>2022 UHS Computer Engineering Capstone Design </h3>
   <h3>AI기반 자세교정/평가 솔루션 Pro,pose(프로,포즈)</h3>
+  <br><br><br>
   <지도교수><br>홍석주<br><br><제작인원><br><김봉준/장준영/서재원>
 </div>
 <br><br><br><br><br>
@@ -58,13 +59,25 @@ AI는 한 없이 냉정하고 차가워보이지만, 언제나 그 자리에서 
   준다는 점을 들어<br>mediapipe 모델을 활용합니다.<br>
   <img src="https://mediapipe.dev/assets/img/brand.svg">
   <br><br><br><br><br>
-  <h3> ★사용 랜드마크★ </h3>
+  
+  
+  ---
+  
+  
+  <br><br>
+  <h3> ★사용 랜드마크★ </h3><br>
   성능향상 및 높은 시인성을 위해 일부 랜드마크의 사용을 제외합니다.
   <br><br>
   <img src="https://mediapipe.dev/images/mobile/pose_tracking_full_body_landmarks.png">
   <br><br>
   0~31번까지의 랜드마크 중 일부를 제외한 11~16, 23~28 총 12개의 랜드마크를 활용합니다.
   <br><br><br><br><br>
+  
+  
+  ---
+  
+  
+  <br><br>
   <h3> ★영상비교 설명★ </h3>
   <br>
   똑같은 영상이 아니고서, 두 가지의 영상을 1:1로 비교한다는 것은 불가능에 가깝습니다.<br>
