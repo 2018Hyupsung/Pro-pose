@@ -57,23 +57,45 @@ AI는 한 없이 냉정하고 차가워보이지만, 언제나 그 자리에서 
   현재 다양한 종류의 Estimation 모델들이 출시되어 있습니다.<br>본 프로젝트에서는 각 영상마다 단일 객체를 인식한다는 점, 높은 GPU처리성능 없이 CPU로 분석이 가능하다는 점, 높은 프레임의 결과를 보여
   준다는 점을 들어<br>mediapipe 모델을 활용합니다.<br>
   <img src="https://mediapipe.dev/assets/img/brand.svg">
-  <br><br><br>
+  <br><br><br><br><br>
   <h3> ★사용 랜드마크★ </h3>
   성능향상 및 높은 시인성을 위해 일부 랜드마크의 사용을 제외합니다.
   <br><br>
   <img src="https://mediapipe.dev/images/mobile/pose_tracking_full_body_landmarks.png">
   <br><br>
   0~31번까지의 랜드마크 중 일부를 제외한 11~16, 23~28 총 12개의 랜드마크를 활용합니다.
-  <br><br><br><br>
+  <br><br><br><br><br>
   <h3> ★영상비교 설명★ </h3>
   <br>
   똑같은 영상이 아니고서, 두 가지의 영상을 1:1로 비교한다는 것은 불가능에 가깝습니다.<br>
   첫 번째 이유로는 두 pose 객체가 동일한 좌표평면 상에 놓여있지 않다는 점이고,<br>
   두 번째 이유는 두 영상의 특정 프레임이 같은 자세를 취하고 있지 않을 확률이 높기 때문입니다.<br><br>
-  이를 해결하기 위해 3가지의 알고리즘을 활용합니다.<br><br><br>
+  이를 해결하기 위해 3가지의 알고리즘을 활용합니다.<br><br><br><br><br>
   <h3> ★0.Pose Vectorization★ </h3>
-  영상에서의 
-  <h3> ★1.L2 Norm/Regularization★ </h3>
-  
-
+  mediapipe는 대부분의 표현을 0~1까지의 정규화된 수치로 나타냅니다.<br>가령, 640x480의 영상이 있고 특정랜드마크의 좌표가 (100,200)이라면<br>
+  mediapipe는 이를 (100/640, 200/480) -> (0.18525, 0.41667)로 변환합니다.<br><br>
+  <img src="https://user-images.githubusercontent.com/96610952/220829650-ea5e3143-7f2e-40a2-b950-4e3fefa96bcd.png" width="50%"><img src="https://user-images.githubusercontent.com/96610952/220830246-1fb5e215-0926-4445-940a-f90e924f6d76.png" width="50%">
+  <br><br><br>
+  영상의 넓이와 높이를 곱하여 다시 이를 정규화 전 좌표로 되돌려줍니다.<br>그 후, 두 좌표의 차를 통해 각 랜드마크의 연결부를 벡터화시켜줍니다.<br><br>
+  <img src="https://user-images.githubusercontent.com/96610952/220831634-2f02bed1-3941-44e1-b607-b58c2b802c31.png" width="50%">
+  <br><br><br><br><br>
+  <h3> ★1.L2 Norm/Normalization★ </h3>
+  <br><br>
+  두 영상이 같은 자세를 취하고 있더라도, 프레임 속 인물의 위치나 키, 팔다리 길이의 차이 등의<br>이유로 인해 좌표는 언제나 달라질 수 있습니다.<br><br>
+  두 개의 서로 다른 벡터를 같은 환경에서 비교하기 위해서 L2 Norm을 통해 벡터의 크기를 계산하고,<br>정규화(Normalization)을 통해 벡터의 크기를 0~1로 통일합니다.<br><br>
+  <img src="https://user-images.githubusercontent.com/96610952/220835072-1563d4a9-0065-446b-83d0-b57e34cb7810.png"><br>
+  <특정 2차원 벡터 u = (x,y)의 L2 Normalization>
+  <br><br><br><br><br>
+  <h3> ★2.Cosine Similarity★ </h3>
+  <br><br>
+  L2 정규화를 통해 벡터를 같은 조건에서 비교할 수 있게 되었으나,<br>벡터의 크기가 다를 경우(두 영상에서 사람 객체의 원근감이나 팔다리 길이 차이로 인한 경우) 컴퓨터는 이 두 벡터를<br>
+  유사하지 않다고 판단할 것입니다.<br><br>
+  <img src="http://matrix.skku.ac.kr/math4AI-tools/cosine_similarity/PICA5CF.png"><br><br>
+  코사인 유사도(Cosine Similarity)를 활용하면 두 벡터의 크기와 거리는 무시하고 오로지 두 벡터의 방향을 통해 유사도를 판단하게 됩니다.<br><br>
+  <img src="https://wikidocs.net/images/page/24603/코사인유사도.PNG"><br><br>
+  <img src="https://user-images.githubusercontent.com/96610952/220837470-933954a6-fc12-469b-8d66-4509463655d6.png"><br>
+  < i 번째 부위에 대한 두 벡터의 코사인 유사도>
 </div>
+
+
+
