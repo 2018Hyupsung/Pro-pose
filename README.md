@@ -108,7 +108,7 @@ AI는 한 없이 냉정하고 차가워보이지만, 언제나 그 자리에서 
   이 때 DTW(Dynamic Time wraping)을 이용해<br><br>
   1) A영상의 1초 때의 프레임<br>
   2) B영상의 0~2초 사이의 모든 프레임<br>
-  의 유클리디안 거리를 모두 비교하여 DTW의 거리가 가장 짧은(가장 유사도가 비슷한) 두 프레임을 비교/분석합니다.<br>
+  의 유클리디안 거리를 모두 비교하여 DTW의 거리가 가장 짧은(가장 유사도가 비슷한) 두 프레임을 비교/분석합니다.<br><br>
   <img src="https://miro.medium.com/v2/resize:fit:4800/format:webp/1*5TRtfoKOyOgIu4QkoB8bFg.png"><br>
 </div>
 
