@@ -95,6 +95,21 @@ AI는 한 없이 냉정하고 차가워보이지만, 언제나 그 자리에서 
   <img src="https://wikidocs.net/images/page/24603/코사인유사도.PNG"><br><br>
   <img src="https://user-images.githubusercontent.com/96610952/220837470-933954a6-fc12-469b-8d66-4509463655d6.png"><br>
   < i 번째 부위에 대한 두 벡터의 코사인 유사도>
+  <br><br><br><br><br>
+  <h3> ★3.Euclidean Distance★ </h3>
+  <br><br>
+  두 벡터 사이의 거리를 구하는 유클리디안 거리 공식을 통해, 앞서 구한 코사인유사도의 값을 정량화하고,<br>이를 기준으로 각 부위별 스코어를 계산합니다.<br><br>
+  <img src="https://user-images.githubusercontent.com/96610952/220840794-141d4c86-332f-4f1e-9902-faaa75809c6b.png">
+  <br><br><br><br><br>
+  <h3> ★4.Dynamic Time Wraping★ </h3>
+  <br>
+  두 영상을 첫 프레임부터 순차적으로 비교할 때, 특정동작의 흐름이 모든 초에서 동일할 순 없습니다.<br><br>
+  가령 윗몸일으키키를 할 때, 누군가는 1개의 동작을 완료하는데에 1초가 걸릴 수 있으나,<br>혹자는 1개 동작을 완료하는데에 2초의 시간이 소요될 수 있습니다.<br>
+  이 때 DTW(Dynamic Time wraping)을 이용해<br><br>
+  1) A영상의 1초 때의 프레임<br>
+  2) B영상의 0~2초 사이의 모든 프레임<br>
+  의 유클리디안 거리를 모두 비교하여 DTW의 거리가 가장 짧은(가장 유사도가 비슷한) 두 프레임을 비교/분석합니다.
+  <img src="https://miro.medium.com/v2/resize:fit:4800/format:webp/1*5TRtfoKOyOgIu4QkoB8bFg.png"><br>
 </div>
 
 
