@@ -3,32 +3,29 @@ import pandas as pd
 import math
 from media_pipe_module import mediapipe_pose
 
-'''
 
-이하 랜드마크 값 순서
+# 이하 랜드마크 값 순서
 
-Ls_Rs            #11 -> 12    
-Re_Rs            #14 -> 12
-Le_Ls            #13 -> 11
-Rw_Re            #16 -> 14
-Lw_Le            #15 -> 13
-Rh_Rs            #24 -> 12
-Lh_Ls            #23 -> 11
-Lh_Rh            #23 -> 24
-Rk_Rh            #26 -> 24
-Lk_Lh            #25 -> 23
-Ra_Rk            #28 -> 26
-La_Lk            #27 -> 25
+# Ls_Rs            11 -> 12    
+# Re_Rs            14 -> 12
+# Le_Ls            13 -> 11
+# Rw_Re            16 -> 14
+# Lw_Le            15 -> 13
+# Rh_Rs            24 -> 12
+# Lh_Ls            23 -> 11
+# Lh_Rh            23 -> 24
+# Rk_Rh            26 -> 24
+# Lk_Lh            25 -> 23
+# Ra_Rk            28 -> 26
+# La_Lk            27 -> 25
 
-'''
+
 
 
 
 def tracking_info(cap, frames, original) :
 
     # L2 정규화
-    # 단순성을 위한 L2 정규화 : https://codingrabbit.tistory.com/21
-    # 정규화 : https://light-tree.tistory.com/125
     # 각 영상에서 두 랜드마크 사이의 벡터를 단위벡터로 표현.
     def L2normalize(x, y):
         if (x and y) == 0:
@@ -73,9 +70,8 @@ def tracking_info(cap, frames, original) :
 
             
 
-            # 필요에 따라 성능 향상을 위해 이미지 작성을 불가능함으로 기본 설정합니다.
+            # 성능 향상을 위해 이미지 작성을 불가능함으로 기본 설정합니다.
             image.flags.writeable = False
-            #image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             results = pose.process(image)
 
             try:
@@ -97,6 +93,8 @@ def tracking_info(cap, frames, original) :
                 l2_idx += 1
 
                 continue
+
+            
             # 모든 랜드마크를 벡터화합니다.
             for idx, land in enumerate(results.pose_landmarks.landmark):
                 if idx in [0,1,2,3,4,5,6,7,8,9,10,17,18,19,20,21,22,29,30,31,32]:

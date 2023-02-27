@@ -22,26 +22,33 @@ def read_ins_info(csv_path, instructor, info) :
     data_frame_raw = pd.read_csv(csv_path+instructor+info, index_col=0, na_values=['None'])
     data_frame_nan = data_frame_raw.replace({np.nan: None})
     data_frame = np.array(data_frame_nan)
-    #data_frame = data_frame.astype('float64')
     return data_frame
 
 
-# 코사인유사도 (-1 ~ 1)
-def cos_sim(a, b):      #코사인 유사도
-    if((a[0] is None) or (b[0] is None) or (a[1] is None) or (b[1] is None)) :
-        return -2
+# 코사인유사도 (-1 ~ 1) -----> dtaidistance dtw.py 289~300 line
+def cos_sim(a, b):      
+    if(a[0] is None) :
+        a[0] = 999
+    if(b[0] is None):
+         b[0] = 999
+    if(a[1] is None):
+        a[1] = 999
+    if(b[1] is None):
+        b[1] = 999
     if((a[0] == 0 and a[1] == 0) or (b[0] == 0 and b[1] == 0)):
-        return -2
+        return 1
     return np.dot(a, b) / (norm(a) * norm(b))
     
 
-# 유클리드 거리 (0 ~ 2 // 1e9)
+# 유클리드 거리 (0 ~ 2) -----> dtaidistance dtw.py 302~306 line
 def euclid(cos) :
     if (cos == -2) :
         return 1e9
     if (2.0 * (1.0 - cos) < 0) :
         return 0
     return math.sqrt(2.0 * (1.0 - cos))
+
+
 
 
 def tracking(ins_info, stu_info, cap) :
@@ -73,55 +80,6 @@ def tracking(ins_info, stu_info, cap) :
         model_complexity = 1,               #포즈 랜드마크 모델의 복합성입니다.
         ) as pose :
 
-            
-        # 포즈 주석을 이미지 위에 그립니다.
-        """
-        drawing_utils.py
-        line 157다음
-        if idx in [0,1,2,3,4,5,6,7,8,9,10,17,18,19,20,21,22,29,30,31,32]:
-            continue
-        추가로 특정 랜드마크의 생성을 무시합니다.
-        """
-        #ins_image.flags.writeable = True
-        #ins_image = cv2.cvtColor(ins_image, cv2.COLOR_RGB2BGR)
-
-        '''
-        mediapipe_drawing.draw_landmarks(
-            ins_image,
-            ins_results.pose_landmarks,
-            mediapipe_pose.POSE_CONNECTIONS,
-            
-            #drawing_styles.py에서
-            #get_default_pose_landmarks_style()의 속성을 변경합니다.
-            
-            #landmark_drawing_spec = mediapipe_drawing.DrawingSpec(color = (0,0,0), thickness = 8),
-            #connection_drawing_spec = mediapipe_drawing.DrawingSpec(color=(0,255,0), thickness = 5),                                                             
-            )
-        '''
-        '''
-        cv2.line(
-            image,
-            (connects[0][0], connects[0][1]),
-            (connects[1][0], connects[1][1]),
-            color = (255,0,0),
-            thickness = 8
-            )
-        '''
-        '''
-        
-        '''
-        # 보기 편하게 이미지를 좌우 반전합니다. -> 영상은 좌우 반전 금지
-        # 실제 사용에서는 성능향상을 목적으로 미리보기를 차단합니다.
-        #cv2.imshow('Pose_Check', ins_image)
-        #if cv2.waitKey(5) & 0xFF == ord('q'):
-        #    break
-        
-        
-
-
-
-
-        # 이하 학생
 
         while cap.isOpened() :
             success, image = cap.read()
@@ -131,7 +89,6 @@ def tracking(ins_info, stu_info, cap) :
             
 
             image.flags.writeable = True
-            #image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             results = pose.process(image)
             
 
@@ -155,25 +112,12 @@ def tracking(ins_info, stu_info, cap) :
                 array[idx][1] = land_y       # 해당 랜드마크의 y좌표입니다.
 
 
-
-
             ins_dtw_info = [[] for i in range(12)]
             stu_dtw_info = [[] for i in range(12)]
-<<<<<<< HEAD
             
             #각 랜드마크 벡터의 dtw를 dtw_how프레임마다 계산
             #15fps  현재(45 / 15) = 3초마다 계산
             dtw_how = 45
-=======
-            #각 랜드마크 벡터를 dtw를 25프레임마다 계산
-            for i in range(dtw_array_count, dtw_array_count + 20):
-                
-                # if ins_info[dtw_array_count][0] == None:
-                #     ins_info[dtw_array_count][0] = ins_info[0][0]
-                    
-                # if ins_info[dtw_array_count][1] == None:
-                #     ins_info[dtw_array_count][1] = ins_info[0][1]
->>>>>>> 71d3d733df6adc252768b0bb7329967e81a388dc
 
             for i in range(dtw_array_count, dtw_array_count + dtw_how):
                 ins_dtw_info[0].append(np.array([ins_info[i][0], ins_info[i][1]]))
@@ -206,18 +150,18 @@ def tracking(ins_info, stu_info, cap) :
 
             for i in range(12):
                 scores[i] = dtw.distance(ins_dtw_info[i], stu_dtw_info[i], window=4)
-            print("score0", scores[0])
-            print("score1", scores[1])
-            print("score2", scores[2])
-            print("score3", scores[3])
-            print("score4", scores[4])
-            print("score5", scores[5])
-            print("score6", scores[6])
-            print("score7", scores[7])
-            print("score8", scores[8])
-            print("score9", scores[9])
-            print("score10", scores[10])
-            print("score11", scores[11])
+            # print("score0", scores[0])
+            # print("score1", scores[1])
+            # print("score2", scores[2])
+            # print("score3", scores[3])
+            # print("score4", scores[4])
+            # print("score5", scores[5])
+            # print("score6", scores[6])
+            # print("score7", scores[7])
+            # print("score8", scores[8])
+            # print("score9", scores[9])
+            # print("score10", scores[10])
+            # print("score11", scores[11])
             
             # 코사인 유사도 및 유클리드 거리
             # cs1 = euclid(cos_sim(np.array([ins_info[ins_info_idx][0], ins_info[ins_info_idx][1]]), np.array([stu_info[stu_info_idx][0], stu_info[stu_info_idx][1]])))

@@ -68,7 +68,7 @@ already = False
 
 
 
-#------------------------- 2-1.교수자 영상의 csv데이터를 찾고, 존재하지 않는다면 만들어줍니다.
+#------------------------- 2.영상의 csv데이터를 찾고, 존재하지 않는다면 만들어줍니다.
 if (instructor+less_finished+csv) in csv_listdir:
     already = True
 if already == False :
@@ -76,11 +76,9 @@ if already == False :
     pose_tracking_info.tracking_info(ins_cap,ins_frames,instructor)     # (추후) 이미 해당영상에 대해 .csv파일이 존재한다면 이 과정을 생략합니다. / 강의 영상에 대한 scv파일을 생성합니다.
     ins_cap.release()
 ins_info = pose_tracking.read_ins_info(csv_path, instructor+less_finished,csv)    # csv파일을 불러들입니다.
-#-------------------------
 
 already = False
 
-#------------------------- 2-2.학습자 영상의 csv데이터를 찾고, 존재하지 않는다면 만들어줍니다.
 if (student+less_finished+csv) in csv_listdir:
     already = True
 if already == False :
