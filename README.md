@@ -39,7 +39,9 @@ AI는 한 없이 냉정하고 차가워보이지만, 언제나 그 자리에서 
     <img src="https://img.shields.io/badge/pandas-1.5.3-pink">
     <br>
     <img src="https://img.shields.io/badge/dtaidistance-2.3.10-pink">
-    <img src="https://img.shields.io/badge/-with edited dtw.py-pink">
+    <a href="https://raw.githubusercontent.com/2018Hyupsung/Pro-pose/junyoung/dtw.py" download>
+      <img src="https://img.shields.io/badge/-with edited dtw.py-pink">
+    </a>
     <br>
     <img src="https://img.shields.io/badge/node.js-18.14.2-green">
     <img src="https://img.shields.io/badge/react-18.2.0-green">
