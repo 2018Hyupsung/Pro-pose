@@ -287,10 +287,32 @@ def distance(s1, s2,
             dtw[i1 * length] = 0
 
         def cos_sim(a, b):      #코사인 유사도
-                return np.dot(a, b) / (norm(a) * norm(b))
+            if(a[0] is None) :
+                a[0] = 999
+            if(b[0] is None):
+                b[0] = 999
+            if(a[1] is None):
+                a[1] = 999
+            if(b[1] is None):
+                b[1] = 999
+            if((a[0] == 0 and a[1] == 0) or (b[0] == 0 and b[1] == 0)):
+                return 1
+            return np.dot(a, b) / (norm(a) * norm(b))
+
+        def euclid(cos) :
+            
+            if (2.0 * (1.0 - cos) < 0) :
+                return 0
+            return math.sqrt(2.0 * (1.0 - cos))
+
+        def score(euc) :
+            if (euc == np.nan) :
+                return np.nan
+            return 100 - (100 * (0.5 * euc))
 
         for j in range(j_start, j_end):
-            d = cos_sim(s1[i], s2[j])
+            d = euclid(cos_sim(s1[i], s2[j]))
+            scores = score(euclid(cos_sim(s1[i], s2[j])))
             if d > max_step:
                 continue
             assert j + 1 - skip >= 0
@@ -326,7 +348,7 @@ def distance(s1, s2,
             d = min(dtw[i1 * length + min(c, c + window - 1) - skip], psi_shortest)
     if max_dist and d > max_dist:
         d = inf
-    return d
+    return d, scores
 
 
 def distance_fast(s1, s2, window=None, max_dist=None,
