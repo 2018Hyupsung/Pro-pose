@@ -8,6 +8,8 @@ from media_pipe_module import mediapipe_drawing_styles
 from media_pipe_module import mediapipe_pose
 from dtaidistance import dtw
 
+font_italic = "FONT_ITALIC"
+
 
 
 
@@ -34,7 +36,7 @@ def tracking(ins_info, stu_info, cap) :
     
     dtw_array_count = 0
     array = [[0]*2 for j in range(33)]      # (학생)각 랜드마크별 xy좌표 저장 공간
-    scores = np.zeros(12)
+    scores = np.zeros((12,2))
     #(공통) 랜드마크 간 연결 리스트
     connects_list = [[11, 12], [14, 12], [13, 11], [16, 14], [15, 13], 
                      [24, 12], [23, 11], [23, 24], [26, 24], [25, 23], [28, 26], [27, 25]]
@@ -278,18 +280,18 @@ def tracking(ins_info, stu_info, cap) :
 
             for i in range(12):
                 scores[i] = dtw.distance(ins_dtw_info[i], stu_dtw_info[i], window=3)
-            print("score0", scores[0])
-            print("score1", scores[1])
-            print("score2", scores[2])
-            print("score3", scores[3])
-            print("score4", scores[4])
-            print("score0", scores[5])
-            print("score1", scores[6])
-            print("score2", scores[7])
-            print("score3", scores[8])
-            print("score4", scores[9])
-            print("score0", scores[10])
-            print("score1", scores[11])
+            print("score0", scores[0][0])
+            print("score1", scores[1][0])
+            print("score2", scores[2][0])
+            print("score3", scores[3][0])
+            print("score4", scores[4][0])
+            print("score5", scores[5][0])
+            print("score6", scores[6][0])
+            print("score7", scores[7][0])
+            print("score8", scores[8][0])
+            print("score9", scores[9][0])
+            print("score10", scores[10][0])
+            print("score11", scores[11][0])
             
             # 코사인 유사도 및 유클리드 거리
             # cs1 = euclid(cos_sim(np.array([ins_info[ins_info_idx][0], ins_info[ins_info_idx][1]]), np.array([stu_info[stu_info_idx][0], stu_info[stu_info_idx][1]])))
@@ -338,9 +340,9 @@ def tracking(ins_info, stu_info, cap) :
             #cv2 - 랜드마크 선 표현
             for s_idx, i in enumerate(connects_list) :
                 if array[i[0]][0] is not None and array[i[0]][1] is not None and array[i[1]][0] is not None and array[i[1]][1] is not None:
-                    if scores[s_idx] < 5 :
+                    if scores[s_idx][0] < 5 :
                         color = (255, 0, 0)
-                    elif scores[s_idx] < 15 :
+                    elif scores[s_idx][0] < 15 :
                         color = (0, 255, 0)
                     else:
                         color = (0, 0, 255)
@@ -351,6 +353,8 @@ def tracking(ins_info, stu_info, cap) :
                     color = color,
                     thickness = 7
                     )
+                scores_ = "score " + str(s_idx) + " : " + "{:.2f}".format(scores[s_idx][1])
+                cv2.putText(image, scores_, (50,50 + (s_idx * 20)), cv2.FONT_ITALIC, 0.4, (255,0,0), 1)
 
 
             cv2.imshow('Pro-pose', image)
