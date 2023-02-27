@@ -151,21 +151,6 @@ def tracking(ins_info, stu_info, cap) :
 
 
             for i in range(12):
-<<<<<<< HEAD
-                scores[i] = dtw.distance(ins_dtw_info[i], stu_dtw_info[i], window=4)
-            # print("score0", scores[0])
-            # print("score1", scores[1])
-            # print("score2", scores[2])
-            # print("score3", scores[3])
-            # print("score4", scores[4])
-            # print("score5", scores[5])
-            # print("score6", scores[6])
-            # print("score7", scores[7])
-            # print("score8", scores[8])
-            # print("score9", scores[9])
-            # print("score10", scores[10])
-            # print("score11", scores[11])
-=======
                 scores[i] = dtw.distance(ins_dtw_info[i], stu_dtw_info[i], window=3)
             print("score0", scores[0][0])
             print("score1", scores[1][0])
@@ -179,7 +164,6 @@ def tracking(ins_info, stu_info, cap) :
             print("score9", scores[9][0])
             print("score10", scores[10][0])
             print("score11", scores[11][0])
->>>>>>> 0549d13add74b4607d3d4989fc8a9f2b797cf90d
             
             # 코사인 유사도 및 유클리드 거리
             # cs1 = euclid(cos_sim(np.array([ins_info[ins_info_idx][0], ins_info[ins_info_idx][1]]), np.array([stu_info[stu_info_idx][0], stu_info[stu_info_idx][1]])))
@@ -228,15 +212,9 @@ def tracking(ins_info, stu_info, cap) :
             #cv2 - 랜드마크 선 표현
             for s_idx, i in enumerate(connects_list) :
                 if array[i[0]][0] is not None and array[i[0]][1] is not None and array[i[1]][0] is not None and array[i[1]][1] is not None:
-<<<<<<< HEAD
-                    if scores[s_idx] < 20 :
-                        color = (255, 0, 0)
-                    elif scores[s_idx] < 40 :
-=======
                     if scores[s_idx][0] < 5 :
                         color = (255, 0, 0)
                     elif scores[s_idx][0] < 15 :
->>>>>>> 0549d13add74b4607d3d4989fc8a9f2b797cf90d
                         color = (0, 255, 0)
                     else:
                         color = (0, 0, 255)
