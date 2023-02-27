@@ -1,6 +1,6 @@
 <div align="center">
   <h3>2022 UHS Computer Engineering Capstone Design </h3>
-  <h3>AI기반 자세교정/평가 솔루션 Pro,pose(프로,포즈)</h3>
+  <h3>AI기반 운동 재활 도움 솔루션 Pro,pose(프로,포즈)</h3>
   <br><br><br>
   <지도교수><br>홍석주<br><br><제작인원><br><김봉준/장준영/서재원>
 </div>
@@ -9,7 +9,7 @@
 
 
 <div align="center">
-  <img src="https://user-images.githubusercontent.com/96610952/220712126-080e101f-2260-4445-b3d8-35dd28ae65c7.svg" width="600px">
+  <img src="https://user-images.githubusercontent.com/96610952/221468155-b98b80a6-fe57-4d7c-9a5d-145982317aa2.svg" width="600px">
 </div>
   
 <div align="center">
@@ -124,6 +124,7 @@ AI는 한 없이 냉정하고 차가워보이지만, 언제나 그 자리에서 
   의 유클리디안 거리를 모두 비교하여 DTW의 거리가 가장 짧은(가장 유사도가 비슷한) 두 프레임을 비교/분석합니다.<br><br>
   <img src="https://miro.medium.com/v2/resize:fit:4800/format:webp/1*5TRtfoKOyOgIu4QkoB8bFg.png"><br>
 </div>
+
 
 
 
