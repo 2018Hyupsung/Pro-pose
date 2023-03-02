@@ -17,7 +17,7 @@
   <h3> ★LOGO★ </h3>
   <br>
   <br>
-  <img src="https://user-images.githubusercontent.com/96610952/220722785-e132be69-907b-4323-9584-3c2e999600fd.png" width="170px"/>
+  <img src="https://user-images.githubusercontent.com/96610952/222316045-b3e4bd7f-2268-4869-bb68-70abbc25027c.png" width="160px"/>
   <br>
   <br>
   "미숙하지만 뜨거운 열정을 가진 멘티와 식은 듯 보이지만 능숙한 능력을 지닌 멘토 사이를 이어주는 퍼즐"<br><br>
@@ -126,6 +126,7 @@ AI는 한 없이 냉정하고 차가워보이지만, 언제나 그 자리에서 
   의 유클리디안 거리를 모두 비교하여 DTW의 거리가 가장 짧은(가장 유사도가 비슷한) 두 프레임을 비교/분석합니다.<br><br>
   <img src="https://miro.medium.com/v2/resize:fit:4800/format:webp/1*5TRtfoKOyOgIu4QkoB8bFg.png"><br>
 </div>
+
 
 
 
