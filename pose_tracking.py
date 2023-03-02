@@ -3,8 +3,6 @@ import pandas as pd
 from numpy.linalg import norm
 import math
 import cv2
-from media_pipe_module import mediapipe_drawing
-from media_pipe_module import mediapipe_drawing_styles
 from media_pipe_module import mediapipe_pose
 from dtaidistance import dtw
 
@@ -226,7 +224,7 @@ def tracking(ins_info, stu_info, cap) :
                     thickness = 7
                     )
                 scores_ = "score " + str(s_idx) + " : " + "{:.2f}".format(scores[s_idx][1])
-                cv2.putText(image, scores_, (50,50 + (s_idx * 20)), cv2.FONT_ITALIC, 0.4, (255,0,0), 1)
+                cv2.putText(image, scores_, (50,50 + (s_idx * 20)), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
 
 
             cv2.imshow('Pro-pose', image)

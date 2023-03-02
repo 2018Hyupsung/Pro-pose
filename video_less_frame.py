@@ -30,10 +30,21 @@ def get_vid_info(vid) :
 
 def less_frame(vid, mp4) :
 
-    out_name = vid + '_15fps_' + mp4
-    
-    metadata=FFProbe(vid+mp4)
+    if(mp4 == '.mov') :
+        mp4 = '.mp4'
+        out_name = vid + mp4
+        (
+        ffmpeg
+        .input(vid+'.mov')
+        .filter('fps', fps=15, round='up')
+        .hflip()
+        .output(out_name, vcodec = 'h264', acodec = 'aac')
+        .run()
+        )
 
+    out_name = vid + '_15fps_' + mp4
+    print(vid+mp4)
+    metadata=FFProbe(vid+mp4)
     for stream in metadata.streams:
         if stream.is_video():
             frames = stream.frames()

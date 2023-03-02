@@ -6,7 +6,7 @@ from media_pipe_module import mediapipe_pose
 
 # 이하 랜드마크 값 순서
 
-# Ls_Rs            11 -> 12    
+# Ls_Rs            11 -> 12
 # Re_Rs            14 -> 12
 # Le_Ls            13 -> 11
 # Rw_Re            16 -> 14

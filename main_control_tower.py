@@ -34,6 +34,7 @@ csv_listdir = os.listdir(csv_path)
 
 #------------------------확장자/파일 이름 연결자 모음
 mp4 = '.mp4'
+mov = '.mov'
 csv = '.csv'
 less_finished = '_15fps_'
 #------------------------
@@ -60,7 +61,7 @@ already = False
 if (student+less_finished+mp4) in stu_listdir :
     already = True
 if already == False :
-    video_less_frame.less_frame(stu_path+student,mp4)
+    video_less_frame.less_frame(stu_path+student,mov)
 stu_frames = video_less_frame.get_vid_info(stu_path+student+less_finished+mp4)
 
 already = False
