@@ -93,6 +93,6 @@ stu_info = pose_tracking.read_ins_info(csv_path, student+less_finished,csv)    #
 
 #------------------------- 3.교수자의 데이터와 학습자의 영상을 비교분석합니다.
 stu_cap = cv2.VideoCapture(stu_path+student+less_finished+mp4)
-pose_tracking.tracking(ins_info, stu_info, stu_cap)
+pose_tracking.tracking(ins_info, stu_info, stu_cap, stu_frames)
 stu_cap.release()
 #-------------------------

@@ -51,9 +51,11 @@ def euclid(cos) :
 
 
 
-def tracking(ins_info, stu_info, cap) :
+def tracking(ins_info, stu_info, cap, frame_total) :
 
+    frame_now = 1
     dtw_array_count = 0
+    dtw_how = 0
     array = [[0]*2 for j in range(33)]      # (학생)각 랜드마크별 xy좌표 저장 공간
     scores = np.zeros((12,2))
     #(공통) 랜드마크 간 연결 리스트
@@ -81,7 +83,7 @@ def tracking(ins_info, stu_info, cap) :
         ) as pose :
 
 
-        while cap.isOpened() :
+        while (cap.isOpened()) :
             success, image = cap.read()
 
             if not success :
@@ -113,55 +115,59 @@ def tracking(ins_info, stu_info, cap) :
 
 
             ins_dtw_info = [[] for i in range(12)]
-            stu_dtw_info = [[] for i in range(12)]
+            if(frame_total - frame_now > dtw_how) :
+                stu_dtw_info = [[] for i in range(12)]
             
             #각 랜드마크 벡터의 dtw를 dtw_how프레임마다 계산
             #15fps  현재(45 / 15) = 3초마다 계산
             dtw_how = 45
-
+            
             for i in range(dtw_array_count, dtw_array_count + dtw_how):
                 ins_dtw_info[0].append(np.array([ins_info[i][0], ins_info[i][1]]))
-                stu_dtw_info[0].append(np.array([stu_info[i][0], stu_info[i][1]]))
                 ins_dtw_info[1].append(np.array([ins_info[i][2], ins_info[i][3]]))
-                stu_dtw_info[1].append(np.array([stu_info[i][2], stu_info[i][3]]))
                 ins_dtw_info[2].append(np.array([ins_info[i][4], ins_info[i][5]]))
-                stu_dtw_info[2].append(np.array([stu_info[i][4], stu_info[i][5]]))
                 ins_dtw_info[3].append(np.array([ins_info[i][6], ins_info[i][7]]))
-                stu_dtw_info[3].append(np.array([stu_info[i][6], stu_info[i][7]]))
                 ins_dtw_info[4].append(np.array([ins_info[i][8], ins_info[i][9]]))
-                stu_dtw_info[4].append(np.array([stu_info[i][8], stu_info[i][9]]))
                 ins_dtw_info[5].append(np.array([ins_info[i][10], ins_info[i][11]]))
-                stu_dtw_info[5].append(np.array([stu_info[i][10], stu_info[i][11]]))
                 ins_dtw_info[6].append(np.array([ins_info[i][12], ins_info[i][13]]))
-                stu_dtw_info[6].append(np.array([stu_info[i][12], stu_info[i][13]]))
                 ins_dtw_info[7].append(np.array([ins_info[i][14], ins_info[i][15]]))
-                stu_dtw_info[7].append(np.array([stu_info[i][14], stu_info[i][15]]))
                 ins_dtw_info[8].append(np.array([ins_info[i][16], ins_info[i][17]]))
-                stu_dtw_info[8].append(np.array([stu_info[i][16], stu_info[i][17]]))
                 ins_dtw_info[9].append(np.array([ins_info[i][18], ins_info[i][19]]))
-                stu_dtw_info[9].append(np.array([stu_info[i][18], stu_info[i][19]]))
                 ins_dtw_info[10].append(np.array([ins_info[i][20], ins_info[i][21]]))
-                stu_dtw_info[10].append(np.array([stu_info[i][20], stu_info[i][21]]))
                 ins_dtw_info[11].append(np.array([ins_info[i][22], ins_info[i][23]]))
-                stu_dtw_info[11].append(np.array([stu_info[i][22], stu_info[i][23]]))
             
+            if(frame_total - frame_now > dtw_how) :
+                for i in range(dtw_array_count, dtw_array_count + dtw_how):
+                    stu_dtw_info[0].append(np.array([stu_info[i][0], stu_info[i][1]]))
+                    stu_dtw_info[1].append(np.array([stu_info[i][2], stu_info[i][3]]))
+                    stu_dtw_info[2].append(np.array([stu_info[i][4], stu_info[i][5]]))
+                    stu_dtw_info[3].append(np.array([stu_info[i][6], stu_info[i][7]]))
+                    stu_dtw_info[4].append(np.array([stu_info[i][8], stu_info[i][9]]))
+                    stu_dtw_info[5].append(np.array([stu_info[i][10], stu_info[i][11]]))
+                    stu_dtw_info[6].append(np.array([stu_info[i][12], stu_info[i][13]]))
+                    stu_dtw_info[7].append(np.array([stu_info[i][14], stu_info[i][15]]))
+                    stu_dtw_info[8].append(np.array([stu_info[i][16], stu_info[i][17]]))
+                    stu_dtw_info[9].append(np.array([stu_info[i][18], stu_info[i][19]]))
+                    stu_dtw_info[10].append(np.array([stu_info[i][20], stu_info[i][21]]))
+                    stu_dtw_info[11].append(np.array([stu_info[i][22], stu_info[i][23]]))
+                print(frame_now, ": success")
             dtw_array_count += 1
 
 
             for i in range(12):
                 scores[i] = dtw.distance(ins_dtw_info[i], stu_dtw_info[i], window=3)
-            print("score0", scores[0][0])
-            print("score1", scores[1][0])
-            print("score2", scores[2][0])
-            print("score3", scores[3][0])
-            print("score4", scores[4][0])
-            print("score5", scores[5][0])
-            print("score6", scores[6][0])
-            print("score7", scores[7][0])
-            print("score8", scores[8][0])
-            print("score9", scores[9][0])
-            print("score10", scores[10][0])
-            print("score11", scores[11][0])
+            # print("score0", scores[0][0])
+            # print("score1", scores[1][0])
+            # print("score2", scores[2][0])
+            # print("score3", scores[3][0])
+            # print("score4", scores[4][0])
+            # print("score5", scores[5][0])
+            # print("score6", scores[6][0])
+            # print("score7", scores[7][0])
+            # print("score8", scores[8][0])
+            # print("score9", scores[9][0])
+            # print("score10", scores[10][0])
+            # print("score11", scores[11][0])
             
             # 코사인 유사도 및 유클리드 거리
             # cs1 = euclid(cos_sim(np.array([ins_info[ins_info_idx][0], ins_info[ins_info_idx][1]]), np.array([stu_info[stu_info_idx][0], stu_info[stu_info_idx][1]])))
@@ -226,6 +232,7 @@ def tracking(ins_info, stu_info, cap) :
                 scores_ = "score " + str(s_idx) + " : " + "{:.2f}".format(scores[s_idx][1])
                 cv2.putText(image, scores_, (50,50 + (s_idx * 20)), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
 
+            frame_now += 1
 
             cv2.imshow('Pro-pose', image)
             if cv2.waitKey(5) & 0xFF == ord('q'):
