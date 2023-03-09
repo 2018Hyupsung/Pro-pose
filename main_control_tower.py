@@ -61,7 +61,7 @@ already = False
 if (student+less_finished+mp4) in stu_listdir :
     already = True
 if already == False :
-    video_less_frame.less_frame(stu_path+student,mov)
+    video_less_frame.less_frame(stu_path+student,mp4)
 stu_frames = video_less_frame.get_vid_info(stu_path+student+less_finished+mp4)
 
 already = False

@@ -40,6 +40,7 @@ def tracking_info(cap, frames, original) :
 
 
 
+    land_pass = []
     array = [[0]*2 for i in range(33)]      #각 랜드마크별 xy좌표 저장 공간
 
     # (instructor.csv) - 저장을 위해 데이터프레임을 생성합니다. / 프레임별 데이터를 담기 위해 열을 생성합니다.
@@ -74,25 +75,11 @@ def tracking_info(cap, frames, original) :
             image.flags.writeable = False
             results = pose.process(image)
 
-            try:
-                results.pose_landmarks.landmark
-            except AttributeError:
-                L2_landmarks[l2_idx][0], L2_landmarks[l2_idx][1] = None, None            #11 -> 12    
-                L2_landmarks[l2_idx][2], L2_landmarks[l2_idx][3] = None, None            #14 -> 12
-                L2_landmarks[l2_idx][4], L2_landmarks[l2_idx][5] = None, None            #13 -> 11
-                L2_landmarks[l2_idx][6], L2_landmarks[l2_idx][7] = None, None            #16 -> 14
-                L2_landmarks[l2_idx][8], L2_landmarks[l2_idx][9] = None, None            #15 -> 13
-                L2_landmarks[l2_idx][10], L2_landmarks[l2_idx][11] = None, None          #24 -> 12
-                L2_landmarks[l2_idx][12], L2_landmarks[l2_idx][13] = None, None          #23 -> 11
-                L2_landmarks[l2_idx][14], L2_landmarks[l2_idx][15] = None, None          #23 -> 24
-                L2_landmarks[l2_idx][16], L2_landmarks[l2_idx][17] = None, None          #26 -> 24
-                L2_landmarks[l2_idx][18], L2_landmarks[l2_idx][19] = None, None          #25 -> 23
-                L2_landmarks[l2_idx][20], L2_landmarks[l2_idx][21] = None, None          #28 -> 26
-                L2_landmarks[l2_idx][22], L2_landmarks[l2_idx][23] = None, None          #27 -> 25
-                
-                l2_idx += 1
-
-                continue
+            for i in range(12):
+                try:
+                    results.pose_landmarks.landmark[i]
+                except AttributeError:
+                    land_pass.append(i)
 
             
             # 모든 랜드마크를 벡터화합니다.
@@ -100,7 +87,11 @@ def tracking_info(cap, frames, original) :
                 if idx in [0,1,2,3,4,5,6,7,8,9,10,17,18,19,20,21,22,29,30,31,32]:
                     continue
                 
-                if (land.visibility < 0.3) :        # 랜드마크의 가시성 신뢰도가 80% 이하로 떨어지면 값을 None으로 변경합니다.
+                if idx in land_pass :
+                    land_x = None
+                    land_y = None
+
+                if (land.visibility < 0.3) :        # 랜드마크의 가시성 신뢰도가 30% 이하로 떨어지면 값을 None으로 변경합니다.
                     land_x = None
                     land_y = None
                 else : 
@@ -109,7 +100,8 @@ def tracking_info(cap, frames, original) :
                 array[idx][0] = land_x       # 해당 랜드마크의 x좌표입니다.
                 array[idx][1] = land_y       # 해당 랜드마크의 y좌표입니다.
                 
-            
+            land_pass.clear()
+
             if((array[12][0] and array[12][1] and array[11][0] and array[11][1]) is not None) :
                 Ls_Rs = np.array([array[12][0],array[12][1]]) - np.array([array[11][0],array[11][1]])    #11 -> 12
             else :

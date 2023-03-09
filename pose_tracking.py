@@ -113,14 +113,15 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                 array[idx][0] = land_x       # 해당 랜드마크의 x좌표입니다.
                 array[idx][1] = land_y       # 해당 랜드마크의 y좌표입니다.
 
-
+            #각 랜드마크 벡터의 dtw를 dtw_how프레임마다 계산
+            #15fps  현재(45 / 15) = 3초마다 계산
+            dtw_how = 45
+            
             ins_dtw_info = [[] for i in range(12)]
             if(frame_total - frame_now > dtw_how) :
                 stu_dtw_info = [[] for i in range(12)]
             
-            #각 랜드마크 벡터의 dtw를 dtw_how프레임마다 계산
-            #15fps  현재(45 / 15) = 3초마다 계산
-            dtw_how = 45
+            
             
             for i in range(dtw_array_count, dtw_array_count + dtw_how):
                 ins_dtw_info[0].append(np.array([ins_info[i][0], ins_info[i][1]]))
@@ -136,6 +137,8 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                 ins_dtw_info[10].append(np.array([ins_info[i][20], ins_info[i][21]]))
                 ins_dtw_info[11].append(np.array([ins_info[i][22], ins_info[i][23]]))
             
+            print("ins", ins_dtw_info[0])
+
             if(frame_total - frame_now > dtw_how) :
                 for i in range(dtw_array_count, dtw_array_count + dtw_how):
                     stu_dtw_info[0].append(np.array([stu_info[i][0], stu_info[i][1]]))
@@ -150,7 +153,8 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                     stu_dtw_info[9].append(np.array([stu_info[i][18], stu_info[i][19]]))
                     stu_dtw_info[10].append(np.array([stu_info[i][20], stu_info[i][21]]))
                     stu_dtw_info[11].append(np.array([stu_info[i][22], stu_info[i][23]]))
-                print(frame_now, ": success")
+                
+            print("stu", stu_dtw_info[0])
             dtw_array_count += 1
 
 
