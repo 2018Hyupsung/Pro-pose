@@ -17,6 +17,8 @@ font_italic = "FONT_ITALIC"
 
 
 
+
+
 # csv 불러오기
 def read_ins_info(csv_path, instructor, info) :
     data_frame_raw = pd.read_csv(csv_path+instructor+info, index_col=0, na_values=['None'])
@@ -57,7 +59,7 @@ def tracking(ins_info, stu_info, cap, frame_total) :
     dtw_array_count = 0
     dtw_how = 0
     array = [[0]*2 for j in range(33)]      # (학생)각 랜드마크별 xy좌표 저장 공간
-    scores = np.zeros((12,2))
+    
     #(공통) 랜드마크 간 연결 리스트
     connects_list = [[11, 12], [14, 12], [13, 11], [16, 14], [15, 13], 
                      [24, 12], [23, 11], [23, 24], [26, 24], [25, 23], [28, 26], [27, 25]]
@@ -113,32 +115,29 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                 array[idx][0] = land_x       # 해당 랜드마크의 x좌표입니다.
                 array[idx][1] = land_y       # 해당 랜드마크의 y좌표입니다.
 
-            #각 랜드마크 벡터의 dtw를 dtw_how프레임마다 계산
-            #15fps  현재(45 / 15) = 3초마다 계산
-            dtw_how = 45
+            #stu의 dtw를 10프레임을 고정으로 하고 비교한다.
+            #ins의 dtw를 40프레임 범위에서 비교하도록 한다.
+            #15fps  현재 40프레임을 10프레임씩 총 31번 비교
+            dtw_how = 10 # stu
+            dtw_range = 40 # ins
             
-            ins_dtw_info = [[] for i in range(12)]
+            
             if(frame_total - frame_now > dtw_how) :
                 stu_dtw_info = [[] for i in range(12)]
             
+            # frame_info <= 15 인 경우에는 현재 프레임 포함 45프레임을 검사
+            # frame_info > 15 인 경우에는 현재 프레임 이전 15프레임 + 이후 30프레임을 10프레임씩 검사
+            scores = np.zeros(12)
+            temp = np.zeros(12)
+            min_scores = 999    # 해당 프레임의 dtw 최솟값
+            ins_min_frames = 0  #dtw가 최소가되는 프레임의 시작값
+            stu_min_frames = 0
             
-            
-            for i in range(dtw_array_count, dtw_array_count + dtw_how):
-                ins_dtw_info[0].append(np.array([ins_info[i][0], ins_info[i][1]]))
-                ins_dtw_info[1].append(np.array([ins_info[i][2], ins_info[i][3]]))
-                ins_dtw_info[2].append(np.array([ins_info[i][4], ins_info[i][5]]))
-                ins_dtw_info[3].append(np.array([ins_info[i][6], ins_info[i][7]]))
-                ins_dtw_info[4].append(np.array([ins_info[i][8], ins_info[i][9]]))
-                ins_dtw_info[5].append(np.array([ins_info[i][10], ins_info[i][11]]))
-                ins_dtw_info[6].append(np.array([ins_info[i][12], ins_info[i][13]]))
-                ins_dtw_info[7].append(np.array([ins_info[i][14], ins_info[i][15]]))
-                ins_dtw_info[8].append(np.array([ins_info[i][16], ins_info[i][17]]))
-                ins_dtw_info[9].append(np.array([ins_info[i][18], ins_info[i][19]]))
-                ins_dtw_info[10].append(np.array([ins_info[i][20], ins_info[i][21]]))
-                ins_dtw_info[11].append(np.array([ins_info[i][22], ins_info[i][23]]))
-            
-            print("ins", ins_dtw_info[0])
+            min_part_dtw = np.zeros(12) #dtw 평균이 최소가 되는 프레임의 부위별 dtw값
 
+            # min_dtw = np.zeros(12)
+            
+            
             if(frame_total - frame_now > dtw_how) :
                 for i in range(dtw_array_count, dtw_array_count + dtw_how):
                     stu_dtw_info[0].append(np.array([stu_info[i][0], stu_info[i][1]]))
@@ -153,13 +152,72 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                     stu_dtw_info[9].append(np.array([stu_info[i][18], stu_info[i][19]]))
                     stu_dtw_info[10].append(np.array([stu_info[i][20], stu_info[i][21]]))
                     stu_dtw_info[11].append(np.array([stu_info[i][22], stu_info[i][23]]))
+            
+            if(frame_now <= 15):    #현재 프레임이 15 이하인 경우 1 ~ 45프레임까지 비교
+                for j in range(dtw_range - dtw_how + 1):
+                    ins_dtw_info = [[] for i in range(12)]
+                    for i in range(dtw_array_count + j, (dtw_array_count + j) + dtw_how):
+                        ins_dtw_info[0].append(np.array([ins_info[i][0], ins_info[i][1]]))
+                        ins_dtw_info[1].append(np.array([ins_info[i][2], ins_info[i][3]]))
+                        ins_dtw_info[2].append(np.array([ins_info[i][4], ins_info[i][5]]))
+                        ins_dtw_info[3].append(np.array([ins_info[i][6], ins_info[i][7]]))
+                        ins_dtw_info[4].append(np.array([ins_info[i][8], ins_info[i][9]]))
+                        ins_dtw_info[5].append(np.array([ins_info[i][10], ins_info[i][11]]))
+                        ins_dtw_info[6].append(np.array([ins_info[i][12], ins_info[i][13]]))
+                        ins_dtw_info[7].append(np.array([ins_info[i][14], ins_info[i][15]]))
+                        ins_dtw_info[8].append(np.array([ins_info[i][16], ins_info[i][17]]))
+                        ins_dtw_info[9].append(np.array([ins_info[i][18], ins_info[i][19]]))
+                        ins_dtw_info[10].append(np.array([ins_info[i][20], ins_info[i][21]]))
+                        ins_dtw_info[11].append(np.array([ins_info[i][22], ins_info[i][23]]))
+                    for i in range(12):
+                        temp[i] = dtw.distance(ins_dtw_info[i], stu_dtw_info[i], window=3)
+                    average = np.mean(temp)
+                    if(min_scores > average):
+                        min_scores = average
+                        ins_min_frames = dtw_array_count + j
+                        stu_min_frames = dtw_array_count
+                        min_part_dtw = temp
+                        # min_dtw = temp
+
+            elif(frame_now > 15):   #현재 프레임이 15 초과인 경우 (현재 프레임 -15) 부터 (현재 프레임 + 30까지 비교)
+                for j in range(-15 , dtw_range - dtw_how + 1 - 15):
+                    ins_dtw_info = [[] for i in range(12)]
+                    for i in range(dtw_array_count + j, (dtw_array_count + j) + dtw_how):
+                        ins_dtw_info[0].append(np.array([ins_info[i][0], ins_info[i][1]]))
+                        ins_dtw_info[1].append(np.array([ins_info[i][2], ins_info[i][3]]))
+                        ins_dtw_info[2].append(np.array([ins_info[i][4], ins_info[i][5]]))
+                        ins_dtw_info[3].append(np.array([ins_info[i][6], ins_info[i][7]]))
+                        ins_dtw_info[4].append(np.array([ins_info[i][8], ins_info[i][9]]))
+                        ins_dtw_info[5].append(np.array([ins_info[i][10], ins_info[i][11]]))
+                        ins_dtw_info[6].append(np.array([ins_info[i][12], ins_info[i][13]]))
+                        ins_dtw_info[7].append(np.array([ins_info[i][14], ins_info[i][15]]))
+                        ins_dtw_info[8].append(np.array([ins_info[i][16], ins_info[i][17]]))
+                        ins_dtw_info[9].append(np.array([ins_info[i][18], ins_info[i][19]]))
+                        ins_dtw_info[10].append(np.array([ins_info[i][20], ins_info[i][21]]))
+                        ins_dtw_info[11].append(np.array([ins_info[i][22], ins_info[i][23]]))
+                    for i in range(12):
+                        temp[i] = dtw.distance(ins_dtw_info[i], stu_dtw_info[i], window=3)
+                    average = np.mean(temp)
+                    if(min_scores > average):
+                        min_scores = average
+                        ins_min_frames = dtw_array_count + j
+                        stu_min_frames = dtw_array_count
+                        min_part_dtw = temp
+                        # min_dtw = temp
+
+            
+            # print(min_scores)
+            # print(ins_min_frames)
+            # print(stu_min_frames)
+            print(min_part_dtw)
+            # print(min_dtw)
                 
-            print("stu", stu_dtw_info[0])
+                
+               
             dtw_array_count += 1
 
 
-            for i in range(12):
-                scores[i] = dtw.distance(ins_dtw_info[i], stu_dtw_info[i], window=3)
+            
             # print("score0", scores[0][0])
             # print("score1", scores[1][0])
             # print("score2", scores[2][0])
@@ -220,9 +278,9 @@ def tracking(ins_info, stu_info, cap, frame_total) :
             #cv2 - 랜드마크 선 표현
             for s_idx, i in enumerate(connects_list) :
                 if array[i[0]][0] is not None and array[i[0]][1] is not None and array[i[1]][0] is not None and array[i[1]][1] is not None:
-                    if scores[s_idx][0] < 5 :
+                    if min_part_dtw[s_idx] == 0 :
                         color = (255, 0, 0)
-                    elif scores[s_idx][0] < 15 :
+                    elif min_part_dtw[s_idx] < 5 :
                         color = (0, 255, 0)
                     else:
                         color = (0, 0, 255)
@@ -233,8 +291,8 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                     color = color,
                     thickness = 7
                     )
-                scores_ = "score " + str(s_idx) + " : " + "{:.2f}".format(scores[s_idx][1])
-                cv2.putText(image, scores_, (50,50 + (s_idx * 20)), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
+                # scores_ = "score " + str(s_idx) + " : " + "{:.2f}".format(scores[s_idx])
+                # cv2.putText(image, scores_, (50,50 + (s_idx * 20)), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
 
             frame_now += 1
 

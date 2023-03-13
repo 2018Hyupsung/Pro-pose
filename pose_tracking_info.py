@@ -75,21 +75,16 @@ def tracking_info(cap, frames, original) :
             image.flags.writeable = False
             results = pose.process(image)
 
-            for i in range(12):
-                try:
-                    results.pose_landmarks.landmark[i]
-                except AttributeError:
-                    land_pass.append(i)
+            try:
+                results.pose_landmarks.landmark
+            except AttributeError:
+                continue
 
             
             # 모든 랜드마크를 벡터화합니다.
             for idx, land in enumerate(results.pose_landmarks.landmark):
                 if idx in [0,1,2,3,4,5,6,7,8,9,10,17,18,19,20,21,22,29,30,31,32]:
                     continue
-                
-                if idx in land_pass :
-                    land_x = None
-                    land_y = None
 
                 if (land.visibility < 0.3) :        # 랜드마크의 가시성 신뢰도가 30% 이하로 떨어지면 값을 None으로 변경합니다.
                     land_x = None
@@ -100,7 +95,6 @@ def tracking_info(cap, frames, original) :
                 array[idx][0] = land_x       # 해당 랜드마크의 x좌표입니다.
                 array[idx][1] = land_y       # 해당 랜드마크의 y좌표입니다.
                 
-            land_pass.clear()
 
             if((array[12][0] and array[12][1] and array[11][0] and array[11][1]) is not None) :
                 Ls_Rs = np.array([array[12][0],array[12][1]]) - np.array([array[11][0],array[11][1]])    #11 -> 12
