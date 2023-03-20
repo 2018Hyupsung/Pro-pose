@@ -291,6 +291,7 @@ def tracking(ins_info, stu_info, cap, frame_total) :
 
             frame_now += 1
 
+            
             cv2.imshow('Pro-pose', image)
             if cv2.waitKey(5) & 0xFF == ord('q'):
                 break

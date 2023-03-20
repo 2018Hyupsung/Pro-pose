@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import math
+import cv2
 from media_pipe_module import mediapipe_pose
 
 
@@ -39,7 +40,6 @@ def tracking_info(cap, frames, original) :
             
 
 
-
     land_pass = []
     array = [[0]*2 for i in range(33)]      #각 랜드마크별 xy좌표 저장 공간
 
@@ -72,7 +72,8 @@ def tracking_info(cap, frames, original) :
             
 
             # 성능 향상을 위해 이미지 작성을 불가능함으로 기본 설정합니다.
-            image.flags.writeable = False
+            #image.flags.writeable = False
+            image.flags.writeable = True
             results = pose.process(image)
 
             try:
@@ -164,10 +165,12 @@ def tracking_info(cap, frames, original) :
             
             l2_idx += 1
     
+            #키포인트 동작 추출
+            if(original == 'yoga1') :
+                if(l2_idx in (15, 82, 95, 165)) :
+                    cv2.imwrite('./ins_keypoint/'+str(l2_idx)+'.jpg', image)
 
     data_frame = pd.DataFrame(L2_landmarks, columns = cols)
     data_frame = data_frame.astype(float).round(8)
     data_frame.to_csv('./csv/'+original+'_15fps_.csv', na_rep='None')
 
-
-            
