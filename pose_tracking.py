@@ -9,14 +9,8 @@ from dtaidistance import dtw
 font_italic = "FONT_ITALIC"
 
 
-
-
 # ins- 교수자(instructor)
 # stu- 학습자(student)
-
-
-
-
 
 
 # csv 불러오기
@@ -119,7 +113,7 @@ def tracking(ins_info, stu_info, cap, frame_total) :
             #ins의 dtw를 40프레임 범위에서 비교하도록 한다.
             #15fps  현재 40프레임을 10프레임씩 총 31번 비교
             dtw_how = 10 # stu
-            dtw_range = 40 # ins
+            dtw_range = 30 # ins
             
             
             if(frame_total - frame_now > dtw_how) :
@@ -176,7 +170,7 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                         min_scores = average
                         ins_min_frames = dtw_array_count + j
                         stu_min_frames = dtw_array_count
-                        min_part_dtw = temp
+                        min_part_dtw = (1 - (temp / 20)) * 100
                         # min_dtw = temp
 
             elif(frame_now > 15):   #현재 프레임이 15 초과인 경우 (현재 프레임 -15) 부터 (현재 프레임 + 30까지 비교)
@@ -202,7 +196,7 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                         min_scores = average
                         ins_min_frames = dtw_array_count + j
                         stu_min_frames = dtw_array_count
-                        min_part_dtw = temp
+                        min_part_dtw = (1 - (temp / 20)) * 100
                         # min_dtw = temp
 
             
@@ -210,7 +204,8 @@ def tracking(ins_info, stu_info, cap, frame_total) :
             # print(ins_min_frames)
             # print(stu_min_frames)
             print(min_part_dtw)
-            # print(min_dtw)
+            average_min_dtw = np.mean(min_part_dtw)
+            print(average_min_dtw)
                 
                 
                
@@ -278,9 +273,9 @@ def tracking(ins_info, stu_info, cap, frame_total) :
             #cv2 - 랜드마크 선 표현
             for s_idx, i in enumerate(connects_list) :
                 if array[i[0]][0] is not None and array[i[0]][1] is not None and array[i[1]][0] is not None and array[i[1]][1] is not None:
-                    if min_part_dtw[s_idx] == 0 :
+                    if min_part_dtw[s_idx] >= 80 :
                         color = (255, 0, 0)
-                    elif min_part_dtw[s_idx] < 5 :
+                    elif min_part_dtw[s_idx] > 60 :
                         color = (0, 255, 0)
                     else:
                         color = (0, 0, 255)
