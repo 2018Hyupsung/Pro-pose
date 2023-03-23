@@ -49,16 +49,19 @@ def euclid(cos) :
 
 def tracking(ins_info, stu_info, cap, frame_total) :
 
-    frame_now = 1
+    key_point_frame = [15, 82, 95, 165]
+
+    frame_now = 0
     dtw_array_count = 0
     dtw_how = 0
+    scores = np.zeros(12)
     array = [[0]*2 for j in range(33)]      # (학생)각 랜드마크별 xy좌표 저장 공간
     
     #(공통) 랜드마크 간 연결 리스트
     connects_list = [[11, 12], [14, 12], [13, 11], [16, 14], [15, 13], 
                      [24, 12], [23, 11], [23, 24], [26, 24], [25, 23], [28, 26], [27, 25]]
 
-    
+    max_frame = 0
 
     # score
     def score(euc) :
@@ -126,6 +129,8 @@ def tracking(ins_info, stu_info, cap, frame_total) :
             min_scores = 999    # 해당 프레임의 dtw 최솟값
             ins_min_frames = 0  #dtw가 최소가되는 프레임의 시작값
             stu_min_frames = 0
+
+            
             
             min_part_dtw = np.zeros(12) #dtw 평균이 최소가 되는 프레임의 부위별 dtw값
 
@@ -198,14 +203,39 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                         stu_min_frames = dtw_array_count
                         min_part_dtw = (1 - (temp / 20)) * 100
                         # min_dtw = temp
-
+            
             
             # print(min_scores)
-            # print(ins_min_frames)
-            # print(stu_min_frames)
-            print(min_part_dtw)
-            average_min_dtw = np.mean(min_part_dtw)
-            print(average_min_dtw)
+            # print("ins" + str(ins_min_frames))
+            # print("stu" + str(stu_min_frames))
+
+            max_score = 0
+            
+
+            if(ins_min_frames in key_point_frame):
+                for i in range(stu_min_frames, stu_min_frames + dtw_how):
+                    scores[0] = score(euclid(cos_sim(np.array([ins_info[ins_min_frames][0], ins_info[ins_min_frames][1]]), np.array([stu_info[i][0], stu_info[i][1]]))))
+                    scores[1] = score(euclid(cos_sim(np.array([ins_info[ins_min_frames][2], ins_info[ins_min_frames][3]]), np.array([stu_info[i][2], stu_info[i][3]]))))
+                    scores[2] = score(euclid(cos_sim(np.array([ins_info[ins_min_frames][4], ins_info[ins_min_frames][5]]), np.array([stu_info[i][4], stu_info[i][5]]))))
+                    scores[3] = score(euclid(cos_sim(np.array([ins_info[ins_min_frames][6], ins_info[ins_min_frames][7]]), np.array([stu_info[i][6], stu_info[i][7]]))))
+                    scores[4] = score(euclid(cos_sim(np.array([ins_info[ins_min_frames][8], ins_info[ins_min_frames][9]]), np.array([stu_info[i][8], stu_info[i][9]]))))
+                    scores[5] = score(euclid(cos_sim(np.array([ins_info[ins_min_frames][10], ins_info[ins_min_frames][11]]), np.array([stu_info[i][10], stu_info[i][11]]))))
+                    scores[6] = score(euclid(cos_sim(np.array([ins_info[ins_min_frames][12], ins_info[ins_min_frames][13]]), np.array([stu_info[i][12], stu_info[i][13]]))))
+                    scores[7] = score(euclid(cos_sim(np.array([ins_info[ins_min_frames][14], ins_info[ins_min_frames][15]]), np.array([stu_info[i][14], stu_info[i][15]]))))
+                    scores[8] = score(euclid(cos_sim(np.array([ins_info[ins_min_frames][16], ins_info[ins_min_frames][17]]), np.array([stu_info[i][16], stu_info[i][17]]))))
+                    scores[9] = score(euclid(cos_sim(np.array([ins_info[ins_min_frames][18], ins_info[ins_min_frames][19]]), np.array([stu_info[i][18], stu_info[i][19]]))))
+                    scores[10] = score(euclid(cos_sim(np.array([ins_info[ins_min_frames][20], ins_info[ins_min_frames][21]]), np.array([stu_info[i][20], stu_info[i][21]]))))
+                    scores[11] = score(euclid(cos_sim(np.array([ins_info[ins_min_frames][22], ins_info[ins_min_frames][23]]), np.array([stu_info[i][22], stu_info[i][23]]))))
+                    average = np.mean((scores))
+                    if (average > max_score):
+                        max_score = average
+                        max_frame = i
+                print(max_score)
+                print(max_frame)
+
+            # print(min_part_dtw)
+            # average_min_dtw = np.mean(min_part_dtw)
+            # print(average_min_dtw)
                 
                 
                
@@ -286,6 +316,9 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                     color = color,
                     thickness = 7
                     )
+
+            if(frame_now == max_frame) :
+                cv2.imwrite('./keypoint/'+str(frame_now)+'.jpg', image)
                 # scores_ = "score " + str(s_idx) + " : " + "{:.2f}".format(scores[s_idx])
                 # cv2.putText(image, scores_, (50,50 + (s_idx * 20)), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
 
