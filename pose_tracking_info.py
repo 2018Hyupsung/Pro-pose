@@ -40,7 +40,9 @@ def tracking_info(cap, frames, original) :
             
 
 
-    land_pass = []
+    coord_pairs = [[12, 11], [12, 14], [11, 13], [14, 16], [13, 15], [12, 24], 
+                [11, 23], [24, 23], [24, 26], [23, 25], [26, 28], [25, 27]]
+    
     array = [[0]*2 for i in range(33)]      #각 랜드마크별 xy좌표 저장 공간
 
     # (instructor.csv) - 저장을 위해 데이터프레임을 생성합니다. / 프레임별 데이터를 담기 위해 열을 생성합니다.
@@ -97,72 +99,14 @@ def tracking_info(cap, frames, original) :
                 array[idx][1] = land_y       # 해당 랜드마크의 y좌표입니다.
                 
 
-            if((array[12][0] and array[12][1] and array[11][0] and array[11][1]) is not None) :
-                Ls_Rs = np.array([array[12][0],array[12][1]]) - np.array([array[11][0],array[11][1]])    #11 -> 12
-            else :
-                Ls_Rs = np.array([None] * 2)    
-            if((array[12][0] and array[12][1] and array[14][0] and array[14][1]) is not None) :
-                Re_Rs = np.array([array[12][0],array[12][1]]) - np.array([array[14][0],array[14][1]])    #14 -> 12
-            else :
-                Re_Rs = np.array([None] * 2)   
-            if((array[11][0] and array[11][1] and array[13][0] and array[13][1]) is not None) :
-                Le_Ls = np.array([array[11][0],array[11][1]]) - np.array([array[13][0],array[13][1]])    #13 -> 11
-            else :
-                Le_Ls = np.array([None] * 2)   
-            if((array[14][0] and array[14][1] and array[16][0] and array[16][1]) is not None) :
-                Rw_Re = np.array([array[14][0],array[14][1]]) - np.array([array[16][0],array[16][1]])    #16 -> 14
-            else :
-                Rw_Re = np.array([None] * 2)   
-            if((array[13][0] and array[13][1] and array[15][0] and array[15][1]) is not None) :
-                Lw_Le = np.array([array[13][0],array[13][1]]) - np.array([array[15][0],array[15][1]])    #15 -> 13
-            else :
-                Lw_Le = np.array([None] * 2)   
-            if((array[12][0] and array[12][1] and array[24][0] and array[24][1]) is not None) :
-                Rh_Rs = np.array([array[12][0],array[12][1]]) - np.array([array[24][0],array[24][1]])    #24 -> 12
-            else :
-                Rh_Rs = np.array([None] * 2)   
-            if((array[11][0] and array[11][1] and array[23][0] and array[23][1]) is not None) :
-                Lh_Ls = np.array([array[11][0],array[11][1]]) - np.array([array[23][0],array[23][1]])    #23 -> 11
-            else :
-                Lh_Ls = np.array([None] * 2)   
-            if((array[24][0] and array[24][1] and array[23][0] and array[23][1]) is not None) :
-                Lh_Rh = np.array([array[24][0],array[24][1]]) - np.array([array[23][0],array[23][1]])    #23 -> 24
-            else :
-                Lh_Rh = np.array([None] * 2)   
-            if((array[24][0] and array[24][1] and array[26][0] and array[26][1]) is not None) :
-                Rk_Rh = np.array([array[24][0],array[24][1]]) - np.array([array[26][0],array[26][1]])    #26 -> 24
-            else :
-                Rk_Rh = np.array([None] * 2)   
-            if((array[23][0] and array[23][1] and array[25][0] and array[25][1]) is not None) :
-                Lk_Lh = np.array([array[23][0],array[23][1]]) - np.array([array[25][0],array[25][1]])    #25 -> 23
-            else :
-                Lk_Lh = np.array([None] * 2)   
-            if((array[26][0] and array[26][1] and array[28][0] and array[28][1]) is not None) :
-                Ra_Rk = np.array([array[26][0],array[26][1]]) - np.array([array[28][0],array[28][1]])    #28 -> 26
-            else :
-                Ra_Rk = np.array([None] * 2)   
-            if((array[25][0] and array[25][1] and array[27][0] and array[27][1]) is not None) :
-                La_Lk = np.array([array[25][0],array[25][1]]) - np.array([array[27][0],array[27][1]])    #27 -> 25
-            else :
-                La_Lk = np.array([None] * 2)   
-            
+            for idx1, pair in enumerate (coord_pairs):
+                if all(array[pair[i]][j] is not None for i in range(2) for j in range(2)):
+                    difference = np.array([array[pair[0]][0], array[pair[0]][1]]) - np.array([array[pair[1]][0], array[pair[1]][1]])
+                else:
+                    difference = np.array([None] * 2)
+                L2_landmarks[l2_idx][idx1*2], L2_landmarks[l2_idx][idx1*2+1] = L2normalize(difference[0], difference[1]) 
 
-            
-           
-            # L2 정규화
-            L2_landmarks[l2_idx][0], L2_landmarks[l2_idx][1] = L2normalize(Ls_Rs[0], Ls_Rs[1])            #11 -> 12    
-            L2_landmarks[l2_idx][2], L2_landmarks[l2_idx][3] = L2normalize(Re_Rs[0], Re_Rs[1])            #14 -> 12
-            L2_landmarks[l2_idx][4], L2_landmarks[l2_idx][5] = L2normalize(Le_Ls[0], Le_Ls[1])            #13 -> 11
-            L2_landmarks[l2_idx][6], L2_landmarks[l2_idx][7] = L2normalize(Rw_Re[0], Rw_Re[1])            #16 -> 14
-            L2_landmarks[l2_idx][8], L2_landmarks[l2_idx][9] = L2normalize(Lw_Le[0], Lw_Le[1])            #15 -> 13
-            L2_landmarks[l2_idx][10], L2_landmarks[l2_idx][11] = L2normalize(Rh_Rs[0], Rh_Rs[1])          #24 -> 12
-            L2_landmarks[l2_idx][12], L2_landmarks[l2_idx][13] = L2normalize(Lh_Ls[0], Lh_Ls[1])          #23 -> 11
-            L2_landmarks[l2_idx][14], L2_landmarks[l2_idx][15] = L2normalize(Lh_Rh[0], Lh_Rh[1])          #23 -> 24
-            L2_landmarks[l2_idx][16], L2_landmarks[l2_idx][17] = L2normalize(Rk_Rh[0], Rk_Rh[1])          #26 -> 24
-            L2_landmarks[l2_idx][18], L2_landmarks[l2_idx][19] = L2normalize(Lk_Lh[0], Lk_Lh[1])          #25 -> 23
-            L2_landmarks[l2_idx][20], L2_landmarks[l2_idx][21] = L2normalize(Ra_Rk[0], Ra_Rk[1])          #28 -> 26
-            L2_landmarks[l2_idx][22], L2_landmarks[l2_idx][23] = L2normalize(La_Lk[0], La_Lk[1])          #27 -> 25
-            
+
             l2_idx += 1
     
             #키포인트 동작 추출
