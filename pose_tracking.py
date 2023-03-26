@@ -1,25 +1,14 @@
 
 import numpy as np
-import pandas as pd
 from numpy.linalg import norm
 import math
 import cv2
 from media_pipe_module import mediapipe_pose
 from dtaidistance import dtw
-
 font_italic = "FONT_ITALIC"
 
 
-# ins- 교수자(instructor)
-# stu- 학습자(student)
 
-
-# csv 불러오기
-def read_ins_info(csv_path, instructor, info) :
-    data_frame_raw = pd.read_csv(csv_path+instructor+info, index_col=0, na_values=['None'])
-    data_frame_nan = data_frame_raw.replace({np.nan: None})
-    data_frame = np.array(data_frame_nan)
-    return data_frame
 
 
 # 코사인유사도 (-1 ~ 1) -----> dtaidistance dtw.py 289~300 line
@@ -37,6 +26,9 @@ def cos_sim(a, b):
     return np.dot(a, b) / (norm(a) * norm(b))
     
 
+
+
+
 # 유클리드 거리 (0 ~ 2) -----> dtaidistance dtw.py 302~306 line
 def euclid(cos) :
     if (cos == -2) :
@@ -48,21 +40,23 @@ def euclid(cos) :
 
 
 
+
+
+
 def tracking(ins_info, stu_info, cap, frame_total) :
 
     key_point_frame = [15, 82, 95, 165]
-    scores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     scores_temp = np.zeros(12)
     frame_now = 0
     dtw_array_count = 0
     max_frame_list = []
-
     scores_list = []
-
     ins_dtw_info = [[] for i in range(12)]
     stu_dtw_info = [[] for i in range(12)]
-
     scores = np.zeros(12)
+
+
+    scores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     array = [[0]*2 for j in range(33)]      # (학생)각 랜드마크별 xy좌표 저장 공간
     
     #(공통) 랜드마크 간 연결 리스트
@@ -78,8 +72,8 @@ def tracking(ins_info, stu_info, cap, frame_total) :
         return 100 - (100 * (0.5 * euc))
 
 
-    _, image = cap.read()
-    height, weight, _ = image.shape
+    width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))     #영상 높이/넓이 계산
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     
 
@@ -96,7 +90,7 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                 break
             
 
-            image.flags.writeable = True
+            image.flags.writeable = False
             results = pose.process(image)
             
 
@@ -114,7 +108,7 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                     land_x = None
                     land_y = None
                 else : 
-                    land_x, land_y = int(land.x*weight), int(land.y*height)
+                    land_x, land_y = int(land.x*width), int(land.y*height)
 
                 array[idx][0] = land_x       # 해당 랜드마크의 x좌표입니다.
                 array[idx][1] = land_y       # 해당 랜드마크의 y좌표입니다.
@@ -149,36 +143,18 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                 print(frame_total)
                 print(frame_now)
                 for i in range(dtw_array_count, dtw_array_count + dtw_how):
-                    ins_dtw_info[0].append(np.array([ins_info[i][0], ins_info[i][1]]))
-                    ins_dtw_info[1].append(np.array([ins_info[i][2], ins_info[i][3]]))
-                    ins_dtw_info[2].append(np.array([ins_info[i][4], ins_info[i][5]]))
-                    ins_dtw_info[3].append(np.array([ins_info[i][6], ins_info[i][7]]))
-                    ins_dtw_info[4].append(np.array([ins_info[i][8], ins_info[i][9]]))
-                    ins_dtw_info[5].append(np.array([ins_info[i][10], ins_info[i][11]]))
-                    ins_dtw_info[6].append(np.array([ins_info[i][12], ins_info[i][13]]))
-                    ins_dtw_info[7].append(np.array([ins_info[i][14], ins_info[i][15]]))
-                    ins_dtw_info[8].append(np.array([ins_info[i][16], ins_info[i][17]]))
-                    ins_dtw_info[9].append(np.array([ins_info[i][18], ins_info[i][19]]))
-                    ins_dtw_info[10].append(np.array([ins_info[i][20], ins_info[i][21]]))
-                    ins_dtw_info[11].append(np.array([ins_info[i][22], ins_info[i][23]]))
+                    for j in range(12):
+                        ins_dtw_info[j].append(np.array([ins_info[i][j*2], ins_info[i][j*2+1]]))
+
             
                 if(frame_now < dtw_how):       #현재 프레임이 10 미만인 경우 0 ~ 29프레임까지 비교
                     average = 0
                     for j in range(dtw_range - dtw_how + 1):
                         stu_dtw_info = [[] for i in range(12)]
                         for i in range(dtw_array_count + j, (dtw_array_count + j) + dtw_how):
-                            stu_dtw_info[0].append(np.array([stu_info[i][0], stu_info[i][1]]))
-                            stu_dtw_info[1].append(np.array([stu_info[i][2], stu_info[i][3]]))
-                            stu_dtw_info[2].append(np.array([stu_info[i][4], stu_info[i][5]]))
-                            stu_dtw_info[3].append(np.array([stu_info[i][6], stu_info[i][7]]))
-                            stu_dtw_info[4].append(np.array([stu_info[i][8], stu_info[i][9]]))
-                            stu_dtw_info[5].append(np.array([stu_info[i][10], stu_info[i][11]]))
-                            stu_dtw_info[6].append(np.array([stu_info[i][12], stu_info[i][13]]))
-                            stu_dtw_info[7].append(np.array([stu_info[i][14], stu_info[i][15]]))
-                            stu_dtw_info[8].append(np.array([stu_info[i][16], stu_info[i][17]]))
-                            stu_dtw_info[9].append(np.array([stu_info[i][18], stu_info[i][19]]))
-                            stu_dtw_info[10].append(np.array([stu_info[i][20], stu_info[i][21]]))
-                            stu_dtw_info[11].append(np.array([stu_info[i][22], stu_info[i][23]]))
+                            for k in range(12):
+                                stu_dtw_info[k].append(np.array([stu_info[i][2*k], stu_info[i][2*k+1]]))
+
                         for i in range(12):
                             temp[i] = dtw.distance(stu_dtw_info[i], ins_dtw_info[i], window=3)
                         average = np.mean(temp)
@@ -194,18 +170,9 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                     for j in range(-5 , dtw_range - dtw_how -5 + 1):
                         stu_dtw_info = [[] for i in range(12)]
                         for i in range(dtw_array_count + j, (dtw_array_count + j) + dtw_how):
-                            stu_dtw_info[0].append(np.array([stu_info[i][0], stu_info[i][1]]))
-                            stu_dtw_info[1].append(np.array([stu_info[i][2], stu_info[i][3]]))
-                            stu_dtw_info[2].append(np.array([stu_info[i][4], stu_info[i][5]]))
-                            stu_dtw_info[3].append(np.array([stu_info[i][6], stu_info[i][7]]))
-                            stu_dtw_info[4].append(np.array([stu_info[i][8], stu_info[i][9]]))
-                            stu_dtw_info[5].append(np.array([stu_info[i][10], stu_info[i][11]]))
-                            stu_dtw_info[6].append(np.array([stu_info[i][12], stu_info[i][13]]))
-                            stu_dtw_info[7].append(np.array([stu_info[i][14], stu_info[i][15]]))
-                            stu_dtw_info[8].append(np.array([stu_info[i][16], stu_info[i][17]]))
-                            stu_dtw_info[9].append(np.array([stu_info[i][18], stu_info[i][19]]))
-                            stu_dtw_info[10].append(np.array([stu_info[i][20], stu_info[i][21]]))
-                            stu_dtw_info[11].append(np.array([stu_info[i][22], stu_info[i][23]]))
+                            for k in range(12):
+                                stu_dtw_info[k].append(np.array(stu_info[i][2*k:2*k+2]))
+
                         for i in range(12):
                             temp[i] = dtw.distance(stu_dtw_info[i], ins_dtw_info[i], window=3)
                         average = np.mean(temp)
@@ -227,35 +194,21 @@ def tracking(ins_info, stu_info, cap, frame_total) :
             if(frame_now in key_point_temp):
                 average = 0
                 for i in range(stu_min_frames, stu_min_frames + dtw_how):
-                    scores_temp[0] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][0], ins_info[frame_now + key_point_range][1]]), np.array([stu_info[i][0], stu_info[i][1]]))))
-                    scores_temp[1] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][2], ins_info[frame_now + key_point_range][3]]), np.array([stu_info[i][2], stu_info[i][3]]))))
-                    scores_temp[2] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][4], ins_info[frame_now + key_point_range][5]]), np.array([stu_info[i][4], stu_info[i][5]]))))
-                    scores_temp[3] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][6], ins_info[frame_now + key_point_range][7]]), np.array([stu_info[i][6], stu_info[i][7]]))))
-                    scores_temp[4] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][8], ins_info[frame_now + key_point_range][9]]), np.array([stu_info[i][8], stu_info[i][9]]))))
-                    scores_temp[5] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][10], ins_info[frame_now + key_point_range][11]]), np.array([stu_info[i][10], stu_info[i][11]]))))
-                    scores_temp[6] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][12], ins_info[frame_now + key_point_range][13]]), np.array([stu_info[i][12], stu_info[i][13]]))))
-                    scores_temp[7] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][14], ins_info[frame_now + key_point_range][15]]), np.array([stu_info[i][14], stu_info[i][15]]))))
-                    scores_temp[8] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][16], ins_info[frame_now + key_point_range][17]]), np.array([stu_info[i][16], stu_info[i][17]]))))
-                    scores_temp[9] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][18], ins_info[frame_now + key_point_range][19]]), np.array([stu_info[i][18], stu_info[i][19]]))))
-                    scores_temp[10] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][20], ins_info[frame_now + key_point_range][21]]), np.array([stu_info[i][20], stu_info[i][21]]))))
-                    scores_temp[11] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][22], ins_info[frame_now + key_point_range][23]]), np.array([stu_info[i][22], stu_info[i][23]]))))
+                    for j in range(12):
+                        ins_point = np.array([ins_info[frame_now + key_point_range][j*2], ins_info[frame_now + key_point_range][j*2+1]])
+                        stu_point = np.array([stu_info[i][j*2], stu_info[i][j*2+1]])
+                        scores_temp[j] = score(euclid(cos_sim(ins_point, stu_point)))
+
                     average = np.mean(scores_temp)
                     if (average > max_score):
                         max_score = average
                         max_frame = i
 
-                        scores[0] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][0], ins_info[frame_now + key_point_range][1]]), np.array([stu_info[i][0], stu_info[i][1]]))))
-                        scores[1] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][2], ins_info[frame_now + key_point_range][3]]), np.array([stu_info[i][2], stu_info[i][3]]))))
-                        scores[2] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][4], ins_info[frame_now + key_point_range][5]]), np.array([stu_info[i][4], stu_info[i][5]]))))
-                        scores[3] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][6], ins_info[frame_now + key_point_range][7]]), np.array([stu_info[i][6], stu_info[i][7]]))))
-                        scores[4] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][8], ins_info[frame_now + key_point_range][9]]), np.array([stu_info[i][8], stu_info[i][9]]))))
-                        scores[5] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][10], ins_info[frame_now + key_point_range][11]]), np.array([stu_info[i][10], stu_info[i][11]]))))
-                        scores[6] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][12], ins_info[frame_now + key_point_range][13]]), np.array([stu_info[i][12], stu_info[i][13]]))))
-                        scores[7] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][14], ins_info[frame_now + key_point_range][15]]), np.array([stu_info[i][14], stu_info[i][15]]))))
-                        scores[8] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][16], ins_info[frame_now + key_point_range][17]]), np.array([stu_info[i][16], stu_info[i][17]]))))
-                        scores[9] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][18], ins_info[frame_now + key_point_range][19]]), np.array([stu_info[i][18], stu_info[i][19]]))))
-                        scores[10] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][20], ins_info[frame_now + key_point_range][21]]), np.array([stu_info[i][20], stu_info[i][21]]))))
-                        scores[11] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][22], ins_info[frame_now + key_point_range][23]]), np.array([stu_info[i][22], stu_info[i][23]]))))
+                        for j in range(12):
+                            inst_keypoints = np.array(ins_info[frame_now + key_point_range][j*2:j*2+2])
+                            stu_keypoints = np.array(stu_info[i][j*2:j*2+2])
+                            scores[j] = score(euclid(cos_sim(inst_keypoints, stu_keypoints)))
+
 
                         print("temp" + str(scores_temp))
                         # print("스코어 : " + str(max_score))
@@ -295,26 +248,11 @@ def tracking(ins_info, stu_info, cap, frame_total) :
             #         cv2.putText(image, scores_, (50,50 + (i * 20)), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
                 # cv2.imwrite('./keypoint/'+str(frame_now)+'.jpg', image)
 
-            if(key_point_frame[0] < 10 and frame_now < 30):
-                cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
-            elif(frame_now >= key_point_frame[0] - 10 and frame_now < key_point_frame[0] + 20):
-                cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
-
-            if(key_point_frame[1] < 10 and frame_now < 30):
-                cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
-            elif(frame_now >= key_point_frame[1] - 10 and frame_now < key_point_frame[1] + 20):
-                cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
-
-            if(key_point_frame[2] < 10 and frame_now < 30):
-                cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
-            elif(frame_now >= key_point_frame[2] - 10 and frame_now < key_point_frame[2] + 20):
-                cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
-
-            if(key_point_frame[3] < 10 and frame_now < 30):
-                cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
-            elif(frame_now >= key_point_frame[3] - 10 and frame_now < key_point_frame[3] + 20):
-                cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
-        
+            for key_point in key_point_frame:
+                if key_point < 10 and frame_now < 30:
+                    cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
+                elif frame_now >= key_point - 10 and frame_now < key_point + 20:
+                    cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
 
             frame_now += 1
             dtw_array_count += 1

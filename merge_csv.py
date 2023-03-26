@@ -18,3 +18,18 @@ def merge() :
     for i in range (len(file_list)) :
         file = file_list.pop()
         os.remove(file)
+
+    
+def merge_land() :
+    name = './csv/yoga1_1_land.csv'
+    
+    file_list = os.listdir('./temp_land_csv/')
+    file_list.sort()
+    for idx, val in enumerate (file_list) :
+        file_list[idx] = './temp_land_csv/' + val
+
+    dataFrame = pd.concat(map(pd.read_csv, file_list), ignore_index=True)
+    dataFrame.to_csv(name, na_rep='None')
+    for i in range (len(file_list)) :
+        file = file_list.pop()
+        os.remove(file)

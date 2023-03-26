@@ -1,5 +1,6 @@
 import os
 import cv2
+import read_csv
 import pose_tracking
 import pose_tracking_info
 import video_less_frame
@@ -40,6 +41,7 @@ if __name__ == '__main__' :
     mov = '.mov'
     csv = '.csv'
     less_finished = '_15fps_'
+    land_finished = '_land'
     #------------------------
 
     #------------------------프레임
@@ -48,8 +50,9 @@ if __name__ == '__main__' :
     #------------------------
 
     #------------------------멀티프로세싱
-    ins_thread = [0]
-    stu_thread = [0]
+    is_stu = False
+    ins_thread = [int(0)]
+    stu_thread = [int(0)]
     ins_infoall = []
     stu_infoall = []
     #------------------------
@@ -74,6 +77,7 @@ if __name__ == '__main__' :
     if already == False :
         video_less_frame.less_frame(ins_path+instructor,mp4)
     ins_frames = video_less_frame.get_vid_info(ins_path+instructor+less_finished+mp4)-1
+    ins_frames = int(ins_frames)
     #cv2의 프레임은 0~끝프레임-1
 
     already = False
@@ -83,6 +87,7 @@ if __name__ == '__main__' :
     if already == False :
         video_less_frame.less_frame(stu_path+student,mp4)
     stu_frames = video_less_frame.get_vid_info(stu_path+student+less_finished+mp4)-1
+    stu_frames = int(stu_frames)
 
     already = False
     #-------------------------
@@ -98,7 +103,6 @@ if __name__ == '__main__' :
             break
         ins_thread.append(ins_thread[i]+quot)
     ins_thread.append(ins_frames)
-
 
     temp = stu_frames
     quot = temp // 7
@@ -120,42 +124,44 @@ if __name__ == '__main__' :
 
         for idx, val in enumerate (ins_thread) :
             if val is ins_thread[-2] :
-                ins_infoall.append((ins_cap, val, ins_frames))
+                ins_infoall.append((ins_cap, val, ins_frames, is_stu))
                 break
             else :
-                ins_infoall.append((ins_cap, val, ins_thread[idx+1]-1))
+                ins_infoall.append((ins_cap, val, ins_thread[idx+1]-1, is_stu))
+
+        pool = multiprocessing.Pool(processes=12)
+        pool.starmap(pose_tracking_info.tracking_info,ins_infoall)
+        pool.close()
+        pool.join()
+        
+        merge_csv.merge()
 
     already = False
 
     if (student+less_finished+csv) in csv_listdir:
         already = True
     if already == False :
+        is_stu = True
         stu_cap = stu_path+student+less_finished+mp4
 
         for idx, val in enumerate (stu_thread) :
             if val is stu_thread[-2] :
-                stu_infoall.append((stu_cap, val, stu_frames))
+                stu_infoall.append((stu_cap, val, stu_frames, is_stu))
                 break
             else :
-                stu_infoall.append((stu_cap, val, stu_thread[idx+1]-1))
+                stu_infoall.append((stu_cap, val, stu_thread[idx+1]-1, is_stu))
    
-    # pool = multiprocessing.Pool(processes=8)
-    # pool.starmap(pose_tracking_info.tracking_info,ins_infoall)
-    # pool.close()
-    # pool.join()
+        pool = multiprocessing.Pool(processes=12)
+        pool.starmap(pose_tracking_info.tracking_info,stu_infoall)
+        pool.close()
+        pool.join()
+
+        merge_csv.merge()
+        merge_csv.merge_land()
     
-    # merge_csv.merge()
-
-
-    pool = multiprocessing.Pool(processes=12)
-    pool.starmap(pose_tracking_info.tracking_info,stu_infoall)
-    pool.close()
-    pool.join()
-
-    merge_csv.merge()
-    
-    stu_info = pose_tracking.read_ins_info(csv_path, student+less_finished,csv)    # csv파일을 불러들입니다.
-    ins_info = pose_tracking.read_ins_info(csv_path, instructor+less_finished,csv)    # csv파일을 불러들입니다.
+    stu_info = read_csv.read_csv(csv_path, student+less_finished,csv)    # csv파일을 불러들입니다.
+    ins_info = read_csv.read_csv(csv_path, instructor+less_finished,csv)    # csv파일을 불러들입니다.
+    land_info = read_csv.read_csv(csv_path, student+land_finished,csv)
 
     
 

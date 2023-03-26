@@ -24,7 +24,7 @@ from media_pipe_module import mediapipe_pose
 
 
 
-def tracking_info(path, start, end) :
+def tracking_info(path, start, end, is_stu) :
 
 
     # L2 정규화
@@ -41,17 +41,23 @@ def tracking_info(path, start, end) :
             
 
 
-
     coord_pairs = [[12, 11], [12, 14], [11, 13], [14, 16], [13, 15], [12, 24], 
-                [11, 23], [24, 23], [24, 26], [23, 25], [26, 28], [25, 27]]
-    
-    array = [[0]*2 for i in range(33)]      #각 랜드마크별 xy좌표 저장 공간
+               [11, 23], [24, 23], [24, 26], [23, 25], [26, 28], [25, 27]]
 
-    # (instructor.csv) - 저장을 위해 데이터프레임을 생성합니다. / 프레임별 데이터를 담기 위해 열을 생성합니다.
+    array = [[0]*2 for i in range(33)]      #각 랜드마크별 xy좌표 저장 공간
+    if(is_stu == True) :
+        array_set = [[0] * 24 for i in range(end-start+1)]
+        array_idx = 0
+
+    #프레임별 데이터를 담기 위해 열을 생성합니다.
     cols = ['L2_Ls_Rs_0', 'L2_Ls_Rs_1', 'L2_Re_Rs_0', 'L2_Re_Rs_1', 'L2_Le_Ls_0', 'L2_Le_Ls_1', 'L2_Rw_Re_0', 'L2_Rw_Re_1', 'L2_Lw_Le_0', 
             'L2_Lw_Le_1', 'L2_Rh_Rs_0', 'L2_Rh_Rs_1', 'L2_Lh_Ls_0', 'L2_Lh_Ls_1', 'L2_Lh_Rh_0', 'L2_Lh_Rh_1', 'L2_Rk_Rh_0', 'L2_Rk_Rh_1', 
             'L2_Lk_Lh_0', 'L2_Lk_Lh_1', 'L2_Ra_Rk_0', 'L2_Ra_Rk_1', 'L2_La_Lk_0','L2_La_Lk_1']
+
+    cols_land = ['11_x','11_y','12_x','12_y','13_x','13_y','14_x','14_y','15_x','15_y','16_x','16_y','23_x','23_y','24_x','24_y',
+                 '25_x','25_y','26_x','26_y','27_x','27_y','28_x','28_y']
     
+
     L2_landmarks = np.zeros([end-start+1,24])
     l2_idx = 0
 
@@ -102,6 +108,12 @@ def tracking_info(path, start, end) :
 
                 array[idx][0] = land_x       # 해당 랜드마크의 x좌표입니다.
                 array[idx][1] = land_y       # 해당 랜드마크의 y좌표입니다.
+
+                if (is_stu == True) :
+                    array_set[l2_idx][array_idx*2] = land_x
+                    array_set[l2_idx][array_idx*2+1] = land_y
+                    array_idx += 1
+
                 
             for idx1, pair in enumerate (coord_pairs):
                 if all(array[pair[i]][j] is not None for i in range(2) for j in range(2)):
@@ -109,14 +121,9 @@ def tracking_info(path, start, end) :
                 else:
                     difference = np.array([None] * 2)
                 L2_landmarks[l2_idx][idx1*2], L2_landmarks[l2_idx][idx1*2+1] = L2normalize(difference[0], difference[1]) 
-
-
+            
             l2_idx += 1
-    
-            #키포인트 동작 추출
-            # if(original == 'yoga1') :
-            #     if(l2_idx in (15, 82, 95, 165)) :
-            #         cv2.imwrite('./ins_keypoint/'+str(l2_idx)+'.jpg', image)
+            array_idx = 0
 
     cap.release()
     
@@ -125,3 +132,7 @@ def tracking_info(path, start, end) :
     data_frame = data_frame.astype(float).round(8)
     formatted_num = "{:03d}".format(start_num)
     data_frame.to_csv('./temp_csv/'+(str)(formatted_num)+'_15fps_.csv', na_rep='None', index=False)
+
+    if is_stu == True :
+        data_frame1 = pd.DataFrame(array_set, columns=cols_land)
+        data_frame1.to_csv('./temp_land_csv/'+(str)(formatted_num)+'_15fps_.csv', na_rep='None', index=False)
