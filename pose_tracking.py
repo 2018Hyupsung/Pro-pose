@@ -53,7 +53,11 @@ def tracking(ins_info, stu_info, cap, frame_total) :
     scores = np.zeros(12)
     frame_now = 0
     dtw_array_count = 0
-    
+    max_frame_list = []
+
+    ins_dtw_info = [[] for i in range(12)]
+    stu_dtw_info = [[] for i in range(12)]
+
     scores = np.zeros(12)
     array = [[0]*2 for j in range(33)]      # (학생)각 랜드마크별 xy좌표 저장 공간
     
@@ -80,7 +84,6 @@ def tracking(ins_info, stu_info, cap, frame_total) :
         min_tracking_confidence = 0.5,      #포즈의 랜드마크를 추적할 수 있는 모델의 최소 신뢰값입니다.
         model_complexity = 1,               #포즈 랜드마크 모델의 복합성입니다.
         ) as pose :
-
 
         while (cap.isOpened()) :
             success, image = cap.read()
@@ -139,6 +142,8 @@ def tracking(ins_info, stu_info, cap, frame_total) :
             
             
             if(frame_total - frame_now > dtw_how) :
+                print(frame_total)
+                print(frame_now)
                 for i in range(dtw_array_count, dtw_array_count + dtw_how):
                     ins_dtw_info[0].append(np.array([ins_info[i][0], ins_info[i][1]]))
                     ins_dtw_info[1].append(np.array([ins_info[i][2], ins_info[i][3]]))
@@ -153,57 +158,57 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                     ins_dtw_info[10].append(np.array([ins_info[i][20], ins_info[i][21]]))
                     ins_dtw_info[11].append(np.array([ins_info[i][22], ins_info[i][23]]))
             
-            if(frame_now <= 15):    #현재 프레임이 15 이하인 경우 1 ~ 45프레임까지 비교
-                for j in range(dtw_range - dtw_how + 1):
-                    stu_dtw_info = [[] for i in range(12)]
-                    for i in range(dtw_array_count + j, (dtw_array_count + j) + dtw_how):
-                        stu_dtw_info[0].append(np.array([stu_info[i][0], stu_info[i][1]]))
-                        stu_dtw_info[1].append(np.array([stu_info[i][2], stu_info[i][3]]))
-                        stu_dtw_info[2].append(np.array([stu_info[i][4], stu_info[i][5]]))
-                        stu_dtw_info[3].append(np.array([stu_info[i][6], stu_info[i][7]]))
-                        stu_dtw_info[4].append(np.array([stu_info[i][8], stu_info[i][9]]))
-                        stu_dtw_info[5].append(np.array([stu_info[i][10], stu_info[i][11]]))
-                        stu_dtw_info[6].append(np.array([stu_info[i][12], stu_info[i][13]]))
-                        stu_dtw_info[7].append(np.array([stu_info[i][14], stu_info[i][15]]))
-                        stu_dtw_info[8].append(np.array([stu_info[i][16], stu_info[i][17]]))
-                        stu_dtw_info[9].append(np.array([stu_info[i][18], stu_info[i][19]]))
-                        stu_dtw_info[10].append(np.array([stu_info[i][20], stu_info[i][21]]))
-                        stu_dtw_info[11].append(np.array([stu_info[i][22], stu_info[i][23]]))
-                    for i in range(12):
-                        temp[i] = dtw.distance(stu_dtw_info[i], ins_dtw_info[i], window=3)
-                    average = np.mean(temp)
-                    if(min_scores > average):
-                        min_scores = average
-                        ins_min_frames = dtw_array_count
-                        stu_min_frames = dtw_array_count + j
-                        min_part_dtw = (1 - (temp / 20)) * 100
-                        # min_dtw = temp
+                if(frame_now < dtw_how):    #현재 프레임이 10 미만인 경우 0 ~ 29프레임까지 비교
+                    for j in range(dtw_range - dtw_how + 1):
+                        stu_dtw_info = [[] for i in range(12)]
+                        for i in range(dtw_array_count + j, (dtw_array_count + j) + dtw_how):
+                            stu_dtw_info[0].append(np.array([stu_info[i][0], stu_info[i][1]]))
+                            stu_dtw_info[1].append(np.array([stu_info[i][2], stu_info[i][3]]))
+                            stu_dtw_info[2].append(np.array([stu_info[i][4], stu_info[i][5]]))
+                            stu_dtw_info[3].append(np.array([stu_info[i][6], stu_info[i][7]]))
+                            stu_dtw_info[4].append(np.array([stu_info[i][8], stu_info[i][9]]))
+                            stu_dtw_info[5].append(np.array([stu_info[i][10], stu_info[i][11]]))
+                            stu_dtw_info[6].append(np.array([stu_info[i][12], stu_info[i][13]]))
+                            stu_dtw_info[7].append(np.array([stu_info[i][14], stu_info[i][15]]))
+                            stu_dtw_info[8].append(np.array([stu_info[i][16], stu_info[i][17]]))
+                            stu_dtw_info[9].append(np.array([stu_info[i][18], stu_info[i][19]]))
+                            stu_dtw_info[10].append(np.array([stu_info[i][20], stu_info[i][21]]))
+                            stu_dtw_info[11].append(np.array([stu_info[i][22], stu_info[i][23]]))
+                        for i in range(12):
+                            temp[i] = dtw.distance(stu_dtw_info[i], ins_dtw_info[i], window=3)
+                        average = np.mean(temp)
+                        if(min_scores > average):
+                            min_scores = average
+                            ins_min_frames = dtw_array_count
+                            stu_min_frames = dtw_array_count + j
+                            min_part_dtw = (1 - (temp / 20)) * 100
+                            # min_dtw = temp
 
-            elif(frame_now > 15):   #현재 프레임이 15 초과인 경우 (현재 프레임 -15) 부터 (현재 프레임 + 30까지 비교)
-                for j in range(-15 , dtw_range - dtw_how + 1 - 15):
-                    stu_dtw_info = [[] for i in range(12)]
-                    for i in range(dtw_array_count + j, (dtw_array_count + j) + dtw_how):
-                        stu_dtw_info[0].append(np.array([stu_info[i][0], stu_info[i][1]]))
-                        stu_dtw_info[1].append(np.array([stu_info[i][2], stu_info[i][3]]))
-                        stu_dtw_info[2].append(np.array([stu_info[i][4], stu_info[i][5]]))
-                        stu_dtw_info[3].append(np.array([stu_info[i][6], stu_info[i][7]]))
-                        stu_dtw_info[4].append(np.array([stu_info[i][8], stu_info[i][9]]))
-                        stu_dtw_info[5].append(np.array([stu_info[i][10], stu_info[i][11]]))
-                        stu_dtw_info[6].append(np.array([stu_info[i][12], stu_info[i][13]]))
-                        stu_dtw_info[7].append(np.array([stu_info[i][14], stu_info[i][15]]))
-                        stu_dtw_info[8].append(np.array([stu_info[i][16], stu_info[i][17]]))
-                        stu_dtw_info[9].append(np.array([stu_info[i][18], stu_info[i][19]]))
-                        stu_dtw_info[10].append(np.array([stu_info[i][20], stu_info[i][21]]))
-                        stu_dtw_info[11].append(np.array([stu_info[i][22], stu_info[i][23]]))
-                    for i in range(12):
-                        temp[i] = dtw.distance(stu_dtw_info[i], ins_dtw_info[i], window=3)
-                    average = np.mean(temp)
-                    if(min_scores > average):
-                        min_scores = average
-                        ins_min_frames = dtw_array_count
-                        stu_min_frames = dtw_array_count + j
-                        min_part_dtw = (1 - (temp / 20)) * 100
-                        # min_dtw = temp
+                elif(frame_now >= dtw_how):   #현재 프레임이 10 이상인 경우 (현재 프레임 -10) 부터 (현재 프레임 + 20까지 비교)
+                    for j in range(-dtw_how , dtw_range - dtw_how + 1 - dtw_how):
+                        stu_dtw_info = [[] for i in range(12)]
+                        for i in range(dtw_array_count + j, (dtw_array_count + j) + dtw_how):
+                            stu_dtw_info[0].append(np.array([stu_info[i][0], stu_info[i][1]]))
+                            stu_dtw_info[1].append(np.array([stu_info[i][2], stu_info[i][3]]))
+                            stu_dtw_info[2].append(np.array([stu_info[i][4], stu_info[i][5]]))
+                            stu_dtw_info[3].append(np.array([stu_info[i][6], stu_info[i][7]]))
+                            stu_dtw_info[4].append(np.array([stu_info[i][8], stu_info[i][9]]))
+                            stu_dtw_info[5].append(np.array([stu_info[i][10], stu_info[i][11]]))
+                            stu_dtw_info[6].append(np.array([stu_info[i][12], stu_info[i][13]]))
+                            stu_dtw_info[7].append(np.array([stu_info[i][14], stu_info[i][15]]))
+                            stu_dtw_info[8].append(np.array([stu_info[i][16], stu_info[i][17]]))
+                            stu_dtw_info[9].append(np.array([stu_info[i][18], stu_info[i][19]]))
+                            stu_dtw_info[10].append(np.array([stu_info[i][20], stu_info[i][21]]))
+                            stu_dtw_info[11].append(np.array([stu_info[i][22], stu_info[i][23]]))
+                        for i in range(12):
+                            temp[i] = dtw.distance(stu_dtw_info[i], ins_dtw_info[i], window=3)
+                        average = np.mean(temp)
+                        if(min_scores > average):
+                            min_scores = average
+                            ins_min_frames = dtw_array_count
+                            stu_min_frames = dtw_array_count + j
+                            min_part_dtw = (1 - (temp / 20)) * 100
+                            # min_dtw = temp
             
             
             # print(min_scores)
@@ -235,6 +240,8 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                         # print("스코어 : " + str(max_score))
                         # print(max_frame)
                 # print(scores)
+                max_frame_list.append(max_frame)
+
                 print("현재 프레임(ins) : " + str(frame_now))
                 print("가장 유사한 프레임(stu) : " + str(max_frame))
                 print("스코어 : " + str(max_score))
@@ -261,8 +268,28 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                 for i in range(12):
                     scores_ = "score " + str(i) + " : " + "{:.2f}".format(scores[i])
                     cv2.putText(image, scores_, (50,50 + (i * 20)), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
-                cv2.imwrite('./keypoint/'+str(frame_now)+'.jpg', image)
-                
+                # cv2.imwrite('./keypoint/'+str(frame_now)+'.jpg', image)
+
+            if(key_point_frame[0] < 10 and frame_now < 30):
+                cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
+            elif(frame_now >= key_point_frame[0] - 10 and frame_now < key_point_frame[0] + 20):
+                cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
+
+            if(key_point_frame[1] < 10 and frame_now < 30):
+                cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
+            elif(frame_now >= key_point_frame[1] - 10 and frame_now < key_point_frame[1] + 20):
+                cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
+
+            if(key_point_frame[2] < 10 and frame_now < 30):
+                cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
+            elif(frame_now >= key_point_frame[2] - 10 and frame_now < key_point_frame[2] + 20):
+                cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
+
+            if(key_point_frame[3] < 10 and frame_now < 30):
+                cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
+            elif(frame_now >= key_point_frame[3] - 10 and frame_now < key_point_frame[3] + 20):
+                cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
+        
 
             frame_now += 1
             dtw_array_count += 1
@@ -270,4 +297,5 @@ def tracking(ins_info, stu_info, cap, frame_total) :
             cv2.imshow('Pro-pose', image)
             if cv2.waitKey(5) & 0xFF == ord('q'):
                 break
+    return max_frame_list
 
