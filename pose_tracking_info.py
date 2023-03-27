@@ -115,24 +115,48 @@ def tracking_info(path, start, end, is_stu) :
                     array_idx += 1
 
                 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+            #L2 정규화
+=======
+>>>>>>> 092967e (csv multiprocessing)
+>>>>>>> 8dd5ff8 (csv multiprocessing)
             for idx1, pair in enumerate (coord_pairs):
                 if all(array[pair[i]][j] is not None for i in range(2) for j in range(2)):
                     difference = np.array([array[pair[0]][0], array[pair[0]][1]]) - np.array([array[pair[1]][0], array[pair[1]][1]])
                 else:
                     difference = np.array([None] * 2)
                 L2_landmarks[l2_idx][idx1*2], L2_landmarks[l2_idx][idx1*2+1] = L2normalize(difference[0], difference[1]) 
+<<<<<<< HEAD
             
+=======
+
+
+>>>>>>> 092967e (csv multiprocessing)
             l2_idx += 1
+<<<<<<< HEAD
             array_idx = 0
+=======
+    
+            #키포인트 동작 추출
+            # if(original == 'yoga1') :
+            #     if(l2_idx in (15, 82, 95, 165)) :
+            #         cv2.imwrite('./ins_keypoint/'+str(l2_idx)+'.jpg', image)
+>>>>>>> 8dd5ff8 (csv multiprocessing)
 
     cap.release()
     
     
     data_frame = pd.DataFrame(L2_landmarks, columns = cols)
     data_frame = data_frame.astype(float).round(8)
+<<<<<<< HEAD
     formatted_num = "{:03d}".format(start_num)
     data_frame.to_csv('./temp_csv/'+(str)(formatted_num)+'_15fps_.csv', na_rep='None', index=False)
 
     if is_stu == True :
         data_frame1 = pd.DataFrame(array_set, columns=cols_land)
         data_frame1.to_csv('./temp_land_csv/'+(str)(formatted_num)+'_15fps_.csv', na_rep='None', index=False)
+=======
+    data_frame.to_csv('./temp_csv/'+(str)(start_num)+'_15fps_.csv', na_rep='None', index=False)
+>>>>>>> 8dd5ff8 (csv multiprocessing)

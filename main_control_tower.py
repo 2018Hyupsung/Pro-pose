@@ -7,7 +7,6 @@ import video_less_frame
 import merge_csv
 import multiprocessing
 
-
 ##########################################################
 #                                                        #
 #                                                        #
@@ -16,7 +15,6 @@ import multiprocessing
 #                                                        #
 #                                                        #
 ##########################################################
-
 
 
 if __name__ == '__main__' :
@@ -168,6 +166,7 @@ if __name__ == '__main__' :
 
     #------------------------- 3.교수자의 데이터와 학습자의 영상을 비교분석합니다.
     stu_cap = cv2.VideoCapture(stu_path+student+less_finished+mp4)
+<<<<<<< HEAD
     stu_frame_list = pose_tracking.tracking(ins_info, stu_info, stu_cap, ins_frames)
     print(stu_frame_list[0])   # stu의 frame_list [0, 29, 84, 92, 150]
     for i in range(ins_frames):
@@ -189,3 +188,39 @@ if __name__ == '__main__' :
         cv2.imwrite("./images/frame%d.jpg" % j,img)
     stu_cap.release()
     #-------------------------
+=======
+    pose_tracking.tracking(ins_info, stu_info, stu_cap, stu_frames)
+    stu_cap.release()
+<<<<<<< HEAD
+stu_info = pose_tracking.read_ins_info(csv_path, student+less_finished,csv)    # csv파일을 불러들입니다.
+#-------------------------
+
+
+
+#------------------------- 3.교수자의 데이터와 학습자의 영상을 비교분석합니다.
+stu_cap = cv2.VideoCapture(stu_path+student+less_finished+mp4)
+stu_frame_list = pose_tracking.tracking(ins_info, stu_info, stu_cap, ins_frames)
+print(stu_frame_list[0])   # stu의 frame_list [0, 29, 84, 92, 150]
+for i in range(ins_frames):
+    if(i in stu_frame_list[0]):
+        continue
+    elif(os.path.exists('./images/frame%d.jpg' % i)):
+        print("i")
+        os.remove('./images/frame%d.jpg' % i)
+count = 0
+
+for j in stu_frame_list[0]:
+    img = cv2.imread('./images/frame%d.jpg' % j, cv2.IMREAD_UNCHANGED)
+    if (j == 0):
+        continue
+    for i in range(12):
+        scores_ = "score " + str(i) + " : " + "{:.2f}".format(stu_frame_list[1][count][i])
+        cv2.putText(img, scores_, (50,50 + (i * 20)), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
+    count += 1
+    cv2.imwrite("./images/frame%d.jpg" % j,img)
+stu_cap.release()
+#-------------------------
+=======
+    #-------------------------
+>>>>>>> 092967e (csv multiprocessing)
+>>>>>>> 8dd5ff8 (csv multiprocessing)
