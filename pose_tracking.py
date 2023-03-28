@@ -50,10 +50,13 @@ def euclid(cos) :
 def tracking(ins_info, stu_info, cap, frame_total) :
 
     key_point_frame = [15, 82, 95, 165]
-    scores = np.zeros(12)
+    scores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    scores_temp = np.zeros(12)
     frame_now = 0
     dtw_array_count = 0
     max_frame_list = []
+
+    scores_list = []
 
     ins_dtw_info = [[] for i in range(12)]
     stu_dtw_info = [[] for i in range(12)]
@@ -158,7 +161,8 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                     ins_dtw_info[10].append(np.array([ins_info[i][20], ins_info[i][21]]))
                     ins_dtw_info[11].append(np.array([ins_info[i][22], ins_info[i][23]]))
             
-                if(frame_now < dtw_how):    #현재 프레임이 10 미만인 경우 0 ~ 29프레임까지 비교
+                if(frame_now < dtw_how):       #현재 프레임이 10 미만인 경우 0 ~ 29프레임까지 비교
+                    average = 0
                     for j in range(dtw_range - dtw_how + 1):
                         stu_dtw_info = [[] for i in range(12)]
                         for i in range(dtw_array_count + j, (dtw_array_count + j) + dtw_how):
@@ -183,9 +187,10 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                             stu_min_frames = dtw_array_count + j
                             min_part_dtw = (1 - (temp / 20)) * 100
                             # min_dtw = temp
-
+                    
                 elif(frame_now >= dtw_how):   #현재 프레임이 10 이상인 경우 (현재 프레임 -10) 부터 (현재 프레임 + 20까지 비교)
-                    for j in range(-dtw_how , dtw_range - dtw_how + 1 - dtw_how):
+                    average = 0
+                    for j in range(-5 , dtw_range - dtw_how -5 + 1):
                         stu_dtw_info = [[] for i in range(12)]
                         for i in range(dtw_array_count + j, (dtw_array_count + j) + dtw_how):
                             stu_dtw_info[0].append(np.array([stu_info[i][0], stu_info[i][1]]))
@@ -209,7 +214,7 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                             stu_min_frames = dtw_array_count + j
                             min_part_dtw = (1 - (temp / 20)) * 100
                             # min_dtw = temp
-            
+                    
             
             # print(min_scores)
             # print("ins" + str(ins_min_frames))
@@ -219,29 +224,48 @@ def tracking(ins_info, stu_info, cap, frame_total) :
             key_point_temp = np.subtract(key_point_frame, key_point_range)    # 키포인트 프레임 리스트에서 key_point_range만큼 뺌 -> 시작 프레임의 값을 지정하기 위해
             
             if(frame_now in key_point_temp):
+                average = 0
                 for i in range(stu_min_frames, stu_min_frames + dtw_how):
-                    scores[0] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][0], ins_info[frame_now + key_point_range][1]]), np.array([stu_info[i][0], stu_info[i][1]]))))
-                    scores[1] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][2], ins_info[frame_now + key_point_range][3]]), np.array([stu_info[i][2], stu_info[i][3]]))))
-                    scores[2] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][4], ins_info[frame_now + key_point_range][5]]), np.array([stu_info[i][4], stu_info[i][5]]))))
-                    scores[3] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][6], ins_info[frame_now + key_point_range][7]]), np.array([stu_info[i][6], stu_info[i][7]]))))
-                    scores[4] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][8], ins_info[frame_now + key_point_range][9]]), np.array([stu_info[i][8], stu_info[i][9]]))))
-                    scores[5] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][10], ins_info[frame_now + key_point_range][11]]), np.array([stu_info[i][10], stu_info[i][11]]))))
-                    scores[6] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][12], ins_info[frame_now + key_point_range][13]]), np.array([stu_info[i][12], stu_info[i][13]]))))
-                    scores[7] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][14], ins_info[frame_now + key_point_range][15]]), np.array([stu_info[i][14], stu_info[i][15]]))))
-                    scores[8] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][16], ins_info[frame_now + key_point_range][17]]), np.array([stu_info[i][16], stu_info[i][17]]))))
-                    scores[9] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][18], ins_info[frame_now + key_point_range][19]]), np.array([stu_info[i][18], stu_info[i][19]]))))
-                    scores[10] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][20], ins_info[frame_now + key_point_range][21]]), np.array([stu_info[i][20], stu_info[i][21]]))))
-                    scores[11] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][22], ins_info[frame_now + key_point_range][23]]), np.array([stu_info[i][22], stu_info[i][23]]))))
-                    average = np.mean(scores)
+                    scores_temp[0] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][0], ins_info[frame_now + key_point_range][1]]), np.array([stu_info[i][0], stu_info[i][1]]))))
+                    scores_temp[1] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][2], ins_info[frame_now + key_point_range][3]]), np.array([stu_info[i][2], stu_info[i][3]]))))
+                    scores_temp[2] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][4], ins_info[frame_now + key_point_range][5]]), np.array([stu_info[i][4], stu_info[i][5]]))))
+                    scores_temp[3] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][6], ins_info[frame_now + key_point_range][7]]), np.array([stu_info[i][6], stu_info[i][7]]))))
+                    scores_temp[4] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][8], ins_info[frame_now + key_point_range][9]]), np.array([stu_info[i][8], stu_info[i][9]]))))
+                    scores_temp[5] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][10], ins_info[frame_now + key_point_range][11]]), np.array([stu_info[i][10], stu_info[i][11]]))))
+                    scores_temp[6] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][12], ins_info[frame_now + key_point_range][13]]), np.array([stu_info[i][12], stu_info[i][13]]))))
+                    scores_temp[7] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][14], ins_info[frame_now + key_point_range][15]]), np.array([stu_info[i][14], stu_info[i][15]]))))
+                    scores_temp[8] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][16], ins_info[frame_now + key_point_range][17]]), np.array([stu_info[i][16], stu_info[i][17]]))))
+                    scores_temp[9] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][18], ins_info[frame_now + key_point_range][19]]), np.array([stu_info[i][18], stu_info[i][19]]))))
+                    scores_temp[10] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][20], ins_info[frame_now + key_point_range][21]]), np.array([stu_info[i][20], stu_info[i][21]]))))
+                    scores_temp[11] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][22], ins_info[frame_now + key_point_range][23]]), np.array([stu_info[i][22], stu_info[i][23]]))))
+                    average = np.mean(scores_temp)
                     if (average > max_score):
                         max_score = average
                         max_frame = i
-                        # print(scores)
+
+                        scores[0] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][0], ins_info[frame_now + key_point_range][1]]), np.array([stu_info[i][0], stu_info[i][1]]))))
+                        scores[1] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][2], ins_info[frame_now + key_point_range][3]]), np.array([stu_info[i][2], stu_info[i][3]]))))
+                        scores[2] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][4], ins_info[frame_now + key_point_range][5]]), np.array([stu_info[i][4], stu_info[i][5]]))))
+                        scores[3] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][6], ins_info[frame_now + key_point_range][7]]), np.array([stu_info[i][6], stu_info[i][7]]))))
+                        scores[4] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][8], ins_info[frame_now + key_point_range][9]]), np.array([stu_info[i][8], stu_info[i][9]]))))
+                        scores[5] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][10], ins_info[frame_now + key_point_range][11]]), np.array([stu_info[i][10], stu_info[i][11]]))))
+                        scores[6] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][12], ins_info[frame_now + key_point_range][13]]), np.array([stu_info[i][12], stu_info[i][13]]))))
+                        scores[7] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][14], ins_info[frame_now + key_point_range][15]]), np.array([stu_info[i][14], stu_info[i][15]]))))
+                        scores[8] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][16], ins_info[frame_now + key_point_range][17]]), np.array([stu_info[i][16], stu_info[i][17]]))))
+                        scores[9] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][18], ins_info[frame_now + key_point_range][19]]), np.array([stu_info[i][18], stu_info[i][19]]))))
+                        scores[10] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][20], ins_info[frame_now + key_point_range][21]]), np.array([stu_info[i][20], stu_info[i][21]]))))
+                        scores[11] = score(euclid(cos_sim(np.array([ins_info[frame_now + key_point_range][22], ins_info[frame_now + key_point_range][23]]), np.array([stu_info[i][22], stu_info[i][23]]))))
+
+                        print("temp" + str(scores_temp))
                         # print("스코어 : " + str(max_score))
                         # print(max_frame)
+                        
                 # print(scores)
+                print(scores)
                 max_frame_list.append(max_frame)
-
+                scores_list.append(list(scores))
+                print(max_frame_list)
+                print(scores_list)
                 print("현재 프레임(ins) : " + str(frame_now))
                 print("가장 유사한 프레임(stu) : " + str(max_frame))
                 print("스코어 : " + str(max_score))
@@ -264,10 +288,10 @@ def tracking(ins_info, stu_info, cap, frame_total) :
                     thickness = 7
                     )
             
-            if(frame_now == max_frame) :
-                for i in range(12):
-                    scores_ = "score " + str(i) + " : " + "{:.2f}".format(scores[i])
-                    cv2.putText(image, scores_, (50,50 + (i * 20)), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
+            # if(frame_now == max_frame) :
+            #     for i in range(12):
+            #         scores_ = "score " + str(i) + " : " + "{:.2f}".format(scores[i])
+            #         cv2.putText(image, scores_, (50,50 + (i * 20)), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
                 # cv2.imwrite('./keypoint/'+str(frame_now)+'.jpg', image)
 
             if(key_point_frame[0] < 10 and frame_now < 30):
@@ -297,5 +321,5 @@ def tracking(ins_info, stu_info, cap, frame_total) :
             cv2.imshow('Pro-pose', image)
             if cv2.waitKey(5) & 0xFF == ord('q'):
                 break
-    return max_frame_list
+    return max_frame_list, scores_list
 
