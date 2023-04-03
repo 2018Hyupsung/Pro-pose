@@ -55,7 +55,7 @@ def less_frame(vid, mp4) :
     ffmpeg
     .input(vid+mp4)
     .filter('fps', fps=15, round='up')
-    .filter('scale', 640, -2)
+    #.filter('scale', 640, -2)
     #.setpts('1.0/{}*PTS'.format(fps-18))       #줄어든 프레임 수 만큼 영상의 총 재생 시간을 감소시킵니다.
     .output(out_name, vcodec = 'h264', acodec = 'aac')
     #.output(out_name, vcodec = 'h264', acodec = 'aac', t = durations)

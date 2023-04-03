@@ -24,7 +24,8 @@ from media_pipe_module import mediapipe_pose
 
 
 
-def tracking_info(cap, frames, original) :
+def tracking_info(path, start, end) :
+
 
     # L2 정규화
     # 각 영상에서 두 랜드마크 사이의 벡터를 단위벡터로 표현.
@@ -40,6 +41,7 @@ def tracking_info(cap, frames, original) :
             
 
 
+
     coord_pairs = [[12, 11], [12, 14], [11, 13], [14, 16], [13, 15], [12, 24], 
                 [11, 23], [24, 23], [24, 26], [23, 25], [26, 28], [25, 27]]
     
@@ -50,13 +52,16 @@ def tracking_info(cap, frames, original) :
             'L2_Lw_Le_1', 'L2_Rh_Rs_0', 'L2_Rh_Rs_1', 'L2_Lh_Ls_0', 'L2_Lh_Ls_1', 'L2_Lh_Rh_0', 'L2_Lh_Rh_1', 'L2_Rk_Rh_0', 'L2_Rk_Rh_1', 
             'L2_Lk_Lh_0', 'L2_Lk_Lh_1', 'L2_Ra_Rk_0', 'L2_Ra_Rk_1', 'L2_La_Lk_0','L2_La_Lk_1']
     
-    L2_landmarks = np.zeros([frames,24])
+    L2_landmarks = np.zeros([end-start+1,24])
     l2_idx = 0
-    
-    
 
-    _, image = cap.read()
-    height, weight, _ = image.shape
+    start_num = start
+    cap = cv2.VideoCapture(path)
+    cap.set(cv2.CAP_PROP_POS_FRAMES, start)    #프레임 이동
+
+    width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))     #영상 높이/넓이 계산
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
 
     with mediapipe_pose.Pose(
         min_detection_confidence = 0.5,     #사람이라고 간주할 수 있는 모델의 최소 신뢰값입니다.
@@ -65,7 +70,7 @@ def tracking_info(cap, frames, original) :
         ) as pose :
        
 
-       while cap.isOpened() :
+       while ((cap.isOpened()) and (l2_idx < end-start+1)) :
             success, image = cap.read()
 
             if not success :
@@ -74,8 +79,8 @@ def tracking_info(cap, frames, original) :
             
 
             # 성능 향상을 위해 이미지 작성을 불가능함으로 기본 설정합니다.
-            #image.flags.writeable = False
-            image.flags.writeable = True
+            image.flags.writeable = False
+            #image.flags.writeable = True
             results = pose.process(image)
 
             try:
@@ -93,12 +98,11 @@ def tracking_info(cap, frames, original) :
                     land_x = None
                     land_y = None
                 else : 
-                    land_x, land_y = int(land.x*weight), int(land.y*height)
+                    land_x, land_y = int(land.x*width), int(land.y*height)
 
                 array[idx][0] = land_x       # 해당 랜드마크의 x좌표입니다.
                 array[idx][1] = land_y       # 해당 랜드마크의 y좌표입니다.
                 
-
             for idx1, pair in enumerate (coord_pairs):
                 if all(array[pair[i]][j] is not None for i in range(2) for j in range(2)):
                     difference = np.array([array[pair[0]][0], array[pair[0]][1]]) - np.array([array[pair[1]][0], array[pair[1]][1]])
@@ -110,11 +114,14 @@ def tracking_info(cap, frames, original) :
             l2_idx += 1
     
             #키포인트 동작 추출
-            if(original == 'yoga1') :
-                if(l2_idx in (15, 82, 95, 165)) :
-                    cv2.imwrite('./ins_keypoint/'+str(l2_idx)+'.jpg', image)
+            # if(original == 'yoga1') :
+            #     if(l2_idx in (15, 82, 95, 165)) :
+            #         cv2.imwrite('./ins_keypoint/'+str(l2_idx)+'.jpg', image)
 
+    cap.release()
+    
+    
     data_frame = pd.DataFrame(L2_landmarks, columns = cols)
     data_frame = data_frame.astype(float).round(8)
-    data_frame.to_csv('./csv/'+original+'_15fps_.csv', na_rep='None')
-
+    formatted_num = "{:03d}".format(start_num)
+    data_frame.to_csv('./temp_csv/'+(str)(formatted_num)+'_15fps_.csv', na_rep='None', index=False)
