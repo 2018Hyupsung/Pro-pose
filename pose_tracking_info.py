@@ -116,24 +116,23 @@ def tracking_info(path, start, end, is_stu) :
 
                 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
             #L2 정규화
 =======
 >>>>>>> 092967e (csv multiprocessing)
 >>>>>>> 8dd5ff8 (csv multiprocessing)
+=======
+>>>>>>> ec6d798 (multiprocessing_bug_fix)
             for idx1, pair in enumerate (coord_pairs):
                 if all(array[pair[i]][j] is not None for i in range(2) for j in range(2)):
                     difference = np.array([array[pair[0]][0], array[pair[0]][1]]) - np.array([array[pair[1]][0], array[pair[1]][1]])
                 else:
                     difference = np.array([None] * 2)
                 L2_landmarks[l2_idx][idx1*2], L2_landmarks[l2_idx][idx1*2+1] = L2normalize(difference[0], difference[1]) 
-<<<<<<< HEAD
-            
-=======
 
 
->>>>>>> 092967e (csv multiprocessing)
             l2_idx += 1
 <<<<<<< HEAD
             array_idx = 0
@@ -151,6 +150,7 @@ def tracking_info(path, start, end, is_stu) :
     data_frame = pd.DataFrame(L2_landmarks, columns = cols)
     data_frame = data_frame.astype(float).round(8)
 <<<<<<< HEAD
+<<<<<<< HEAD
     formatted_num = "{:03d}".format(start_num)
     data_frame.to_csv('./temp_csv/'+(str)(formatted_num)+'_15fps_.csv', na_rep='None', index=False)
 
@@ -160,3 +160,7 @@ def tracking_info(path, start, end, is_stu) :
 =======
     data_frame.to_csv('./temp_csv/'+(str)(start_num)+'_15fps_.csv', na_rep='None', index=False)
 >>>>>>> 8dd5ff8 (csv multiprocessing)
+=======
+    formatted_num = "{:03d}".format(start_num)
+    data_frame.to_csv('./temp_csv/'+(str)(formatted_num)+'_15fps_.csv', na_rep='None', index=False)
+>>>>>>> ec6d798 (multiprocessing_bug_fix)
