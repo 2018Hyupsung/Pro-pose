@@ -172,10 +172,6 @@ if __name__ == '__main__' :
 
     #------------------------- 3.교수자의 데이터와 학습자의 영상을 비교분석합니다.
     stu_cap = cv2.VideoCapture(stu_path+student+less_finished+mp4)
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 07d1191 (multiprocessing_bug_fix)
     stu_frame_list = pose_tracking.tracking(ins_info, stu_info, stu_cap, ins_frames)
     print(stu_frame_list[0])   # stu의 frame_list [0, 29, 84, 92, 150]
     for i in range(ins_frames):
@@ -195,17 +191,5 @@ if __name__ == '__main__' :
             cv2.putText(img, scores_, (50,50 + (i * 20)), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
         count += 1
         cv2.imwrite("./images/frame%d.jpg" % j,img)
-<<<<<<< HEAD
     stu_cap.release()
-    #-------------------------
-=======
-    pose_tracking.tracking(ins_info, stu_info, stu_cap, stu_frames)
-=======
->>>>>>> 07d1191 (multiprocessing_bug_fix)
-    stu_cap.release()
-    #-------------------------
-<<<<<<< HEAD
->>>>>>> 092967e (csv multiprocessing)
->>>>>>> 8dd5ff8 (csv multiprocessing)
-=======
->>>>>>> 07d1191 (multiprocessing_bug_fix)
+
