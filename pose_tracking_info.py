@@ -104,7 +104,7 @@ def tracking_info(path, start, end, is_stu) :
                     land_x = None
                     land_y = None
                 else : 
-                    land_x, land_y = int(land.x*width), int(land.y*height)
+                    land_x, land_y = int(round(land.x*width)), int(round(land.y*height))
 
                 array[idx][0] = land_x       # 해당 랜드마크의 x좌표입니다.
                 array[idx][1] = land_y       # 해당 랜드마크의 y좌표입니다.

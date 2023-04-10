@@ -1,8 +1,9 @@
 import os
 import cv2
 import read_csv
-import pose_tracking
 import pose_tracking_info
+import pose_tracking_drawing
+import pose_tracking_dtw
 import video_less_frame
 import merge_csv
 import multiprocessing
@@ -58,6 +59,11 @@ if __name__ == '__main__' :
     #------------------------csv
     ins_csv = []
     stu_csv = []
+    #------------------------
+
+    #------------------------dtw - 학생 동작 시작 프레임 찾기
+    stu_dtw_frames = []
+    key_point_frame = [15, 82, 95, 165]
     #------------------------
 
     #------------------------기타
@@ -168,12 +174,15 @@ if __name__ == '__main__' :
     ins_info = read_csv.read_csv(csv_path, instructor+less_finished,csv)    # csv파일을 불러들입니다.
     land_info = read_csv.read_csv(csv_path, student+land_finished,csv)
 
-    
+    #pose_tracking_drawing.pose_drawing(stu_path+student+less_finished+mp4, land_info, 0, stu_frames)
+
+    #stu_frame_list = pose_tracking_dtw.tracking_dtw(ins_info, stu_info, stu_path+student+less_finished+mp4, ins_frames)
+    #print(stu_frame_list)
 
     #------------------------- 3.교수자의 데이터와 학습자의 영상을 비교분석합니다.
     stu_cap = cv2.VideoCapture(stu_path+student+less_finished+mp4)
-    stu_frame_list = pose_tracking.tracking(ins_info, stu_info, stu_cap, ins_frames)
-    print(stu_frame_list[0])   # stu의 frame_list [0, 29, 84, 92, 150]
+    stu_frame_list = pose_tracking_dtw.tracking_dtw(ins_info, stu_info, stu_cap, ins_frames)
+    print(stu_frame_list[0])
     for i in range(ins_frames):
         if(i in stu_frame_list[0]):
             continue
@@ -192,4 +201,4 @@ if __name__ == '__main__' :
         count += 1
         cv2.imwrite("./images/frame%d.jpg" % j,img)
     stu_cap.release()
-
+    #-------------------------
