@@ -7,7 +7,7 @@ import pose_tracking_dtw
 import video_less_frame
 import merge_csv
 import multiprocessing
-
+import time
 ##########################################################
 #                                                        #
 #                                                        #
@@ -18,8 +18,9 @@ import multiprocessing
 ##########################################################
 
 
-if __name__ == '__main__' :
 
+if __name__ == '__main__' :
+    start = time.time()
 
     #------------------------교수/학습자 영상 제목
     instructor = 'yoga1'
@@ -33,6 +34,8 @@ if __name__ == '__main__' :
     ins_listdir = os.listdir(ins_path)
     stu_listdir = os.listdir(stu_path)
     csv_listdir = os.listdir(csv_path)
+    ins_image_path = './ins_images/'
+    stu_image_path = './images/'
     #------------------------
 
     #------------------------확장자/파일 이름 연결자 모음
@@ -49,6 +52,7 @@ if __name__ == '__main__' :
     #------------------------
 
     #------------------------멀티프로세싱
+    pool = multiprocessing.Pool(processes=12)
     is_stu = False
     ins_thread = [int(0)]
     stu_thread = [int(0)]
@@ -63,6 +67,15 @@ if __name__ == '__main__' :
 
     #------------------------dtw - 학생 동작 시작 프레임 찾기
     stu_dtw_frames = []
+    #------------------------
+
+    #------------------------ (ins) - 키프레임 포인트
+    keypoint = [15, 135, 255, 420]
+    #------------------------
+
+    #------------------------ tracking 결과 이미지 보관
+    ins_images = []
+    stu_images = []
     #------------------------
 
     #------------------------기타
@@ -127,23 +140,13 @@ if __name__ == '__main__' :
 
         for idx, val in enumerate (ins_thread) :
             if val is ins_thread[-2] :
-                ins_infoall.append((ins_cap, val, ins_frames, is_stu))
+                ins_infoall.append((ins_cap, val, ins_frames, is_stu, keypoint))
                 break
             else :
-                ins_infoall.append((ins_cap, val, ins_thread[idx+1]-1, is_stu))
+                ins_infoall.append((ins_cap, val, ins_thread[idx+1]-1, is_stu , keypoint))
 
-        pool = multiprocessing.Pool(processes=12)
         pool.starmap(pose_tracking_info.tracking_info,ins_infoall)
-        pool.close()
-        pool.join()
         
-        merge_csv.merge()
-
-        pool = multiprocessing.Pool(processes=7)
-        pool.starmap(pose_tracking_info.tracking_info,ins_infoall)
-        pool.close()
-        pool.join()
-    
         merge_csv.merge()
 
     already = False
@@ -156,12 +159,11 @@ if __name__ == '__main__' :
 
         for idx, val in enumerate (stu_thread) :
             if val is stu_thread[-2] :
-                stu_infoall.append((stu_cap, val, stu_frames, is_stu))
+                stu_infoall.append((stu_cap, val, stu_frames, is_stu, keypoint))
                 break
             else :
-                stu_infoall.append((stu_cap, val, stu_thread[idx+1]-1, is_stu))
+                stu_infoall.append((stu_cap, val, stu_thread[idx+1]-1, is_stu, keypoint))
    
-        pool = multiprocessing.Pool(processes=12)
         pool.starmap(pose_tracking_info.tracking_info,stu_infoall)
         pool.close()
         pool.join()
@@ -173,31 +175,47 @@ if __name__ == '__main__' :
     ins_info = read_csv.read_csv(csv_path, instructor+less_finished,csv)    # csv파일을 불러들입니다.
     land_info = read_csv.read_csv(csv_path, student+land_finished,csv)
 
-    #pose_tracking_drawing.pose_drawing(stu_path+student+less_finished+mp4, land_info, 0, stu_frames)
-
-    #stu_frame_list = pose_tracking_dtw.tracking_dtw(ins_info, stu_info, stu_path+student+less_finished+mp4, ins_frames)
-    #print(stu_frame_list)
-
     #------------------------- 3.교수자의 데이터와 학습자의 영상을 비교분석합니다.
     stu_cap = cv2.VideoCapture(stu_path+student+less_finished+mp4)
-    stu_frame_list = pose_tracking_dtw.tracking_dtw(ins_info, stu_info, stu_cap, ins_frames)
+    stu_frame_list = pose_tracking_dtw.tracking_dtw(ins_info, stu_info, stu_cap, ins_frames, keypoint)
     print(stu_frame_list[0])
     for i in range(ins_frames):
         if(i in stu_frame_list[0]):
             continue
-        elif(os.path.exists('./images/frame%d.jpg' % i)):
-            print("i")
-            os.remove('./images/frame%d.jpg' % i)
+        elif(os.path.exists('./images/frame{:03d}.jpg'.format(i))):
+            os.remove('./images/frame{:03d}.jpg'.format(i))
     count = 0
 
     for j in stu_frame_list[0]:
-        img = cv2.imread('./images/frame%d.jpg' % j, cv2.IMREAD_UNCHANGED)
+        img = cv2.imread('./images/frame{:03d}.jpg'.format(j), cv2.IMREAD_UNCHANGED)
         if (j == 0):
             continue
         for i in range(12):
             scores_ = "score " + str(i) + " : " + "{:.2f}".format(stu_frame_list[1][count][i])
             cv2.putText(img, scores_, (50,50 + (i * 20)), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
         count += 1
-        cv2.imwrite("./images/frame%d.jpg" % j,img)
+        cv2.imwrite("./images/frame{:03d}.jpg".format(j),img)
     stu_cap.release()
     #-------------------------
+
+    #------------------------- 4.자세에 대한 피드백을 제공합니다.
+
+
+    stu_info = read_csv.read_csv(csv_path, student+less_finished,csv)    # csv파일을 불러들입니다.
+    ins_info = read_csv.read_csv(csv_path, instructor+less_finished,csv)    # csv파일을 불러들입니다.
+    land_info = read_csv.read_csv(csv_path, student+land_finished,csv)
+
+
+
+    ins_images_temp = os.listdir(ins_image_path)
+    stu_images_temp = os.listdir(stu_image_path)
+    for i in range(len(ins_images_temp)) :
+        ins_images.append(ins_image_path+ins_images_temp[i])
+        stu_images.append(stu_image_path+stu_images_temp[i])
+    ins_images.sort()
+    stu_images.sort()
+
+    pose_tracking_drawing.pose_drawing(ins_info, stu_info, ins_images, stu_images)
+    #-------------------------
+
+    print(time.time()-start)

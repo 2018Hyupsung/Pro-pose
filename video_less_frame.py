@@ -34,7 +34,7 @@ def less_frame(vid, mp4) :
         ffmpeg
         .input(vid+'.mov')
         .filter('fps', fps=15, round='up')
-        .filter('unsharp', luma_msize_x=3, luma_msize_y=3, luma_amount=1.5, luma_threshold=3)
+        .filter('unsharp', luma_msize_x=3, luma_msize_y=3, luma_amount=1.5)
         .hflip()
         .output(out_name, vcodec = 'h264', acodec = 'aac')
         .run()
@@ -56,8 +56,8 @@ def less_frame(vid, mp4) :
     ffmpeg
     .input(vid+mp4)
     .filter('fps', fps=15, round='up')
-    .filter('unsharp', luma_msize_x=3, luma_msize_y=3, luma_amount=1.5, luma_threshold=3)
-    #.filter('scale', 640, -2)
+    .filter('unsharp', luma_msize_x=3, luma_msize_y=3, luma_amount=1.5)
+    .filter('scale', 1280, 720)
     #.setpts('1.0/{}*PTS'.format(fps-18))       #줄어든 프레임 수 만큼 영상의 총 재생 시간을 감소시킵니다.
     .output(out_name, vcodec = 'h264', acodec = 'aac')
     #.output(out_name, vcodec = 'h264', acodec = 'aac', t = durations)

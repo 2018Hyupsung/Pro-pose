@@ -24,7 +24,7 @@ from media_pipe_module import mediapipe_pose
 
 
 
-def tracking_info(path, start, end, is_stu) :
+def tracking_info(path, start, end, is_stu, keypoint) :
 
 
     # L2 정규화
@@ -56,12 +56,12 @@ def tracking_info(path, start, end, is_stu) :
 
     cols_land = ['11_x','11_y','12_x','12_y','13_x','13_y','14_x','14_y','15_x','15_y','16_x','16_y','23_x','23_y','24_x','24_y',
                  '25_x','25_y','26_x','26_y','27_x','27_y','28_x','28_y']
-    
 
     L2_landmarks = np.zeros([end-start+1,24])
     l2_idx = 0
 
     start_num = start
+    keypoint_idx = start
     cap = cv2.VideoCapture(path)
     cap.set(cv2.CAP_PROP_POS_FRAMES, start)    #프레임 이동
 
@@ -124,7 +124,11 @@ def tracking_info(path, start, end, is_stu) :
                 L2_landmarks[l2_idx][idx1*2], L2_landmarks[l2_idx][idx1*2+1] = L2normalize(difference[0], difference[1]) 
 
 
+            if((keypoint_idx in keypoint) and (is_stu == False)) :
+                cv2.imwrite("./ins_images/frame{:03d}.jpg".format(keypoint_idx), image)
+
             l2_idx += 1
+            keypoint_idx += 1
             array_idx = 0
 
     cap.release()

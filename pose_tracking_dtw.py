@@ -1,4 +1,3 @@
-import read_csv
 import numpy as np
 from numpy.linalg import norm
 import math
@@ -44,15 +43,16 @@ def score(a, b):
         return np.nan
     return 100 - (50 * euc)
 
+# multiprocessing - zip
 def calculate_distance(args):
     stu, ins, w = args
     return dtw.distance(stu, ins, window=w)
 
 
-def tracking_dtw(ins_info, stu_info, cap, frame_total) :
+def tracking_dtw(ins_info, stu_info, cap, frame_total, keypoint) :
     pool = multiprocessing.Pool(processes=12)
     #------------------------ (ins) 기준 키프레임
-    key_point_frame = [15, 82, 95, 165]
+    key_point_frame = keypoint
     #------------------------
     #------------------------ (ins/stu) 점수모음
     scores_temp = np.zeros(12)
@@ -216,18 +216,18 @@ def tracking_dtw(ins_info, stu_info, cap, frame_total) :
         #cv2 - 랜드마크 선 표현
             for s_idx, i in enumerate(connects_list) :
                 if array[i[0]][0] is not None and array[i[0]][1] is not None and array[i[1]][0] is not None and array[i[1]][1] is not None:
-                    if min_part_dtw[s_idx] >= 80 :
-                        color = (255, 0, 0)
-                    elif min_part_dtw[s_idx] > 60 :
-                        color = (0, 255, 0)
+                    if scores[s_idx] >= 85 :
+                        color = (0, 255, 255)
+                    elif scores[s_idx] > 70 :
+                        color = (255, 255, 0)
                     else:
-                        color = (0, 0, 255)
+                        color = (255, 153, 255)
                     cv2.line(
                     image,
                     (array[i[0]][0], array[i[0]][1]),
                     (array[i[1]][0], array[i[1]][1]),
                     color = color,
-                    thickness = 7
+                    thickness = 2
                     )
             
             # if(frame_now == max_frame) :
@@ -238,15 +238,15 @@ def tracking_dtw(ins_info, stu_info, cap, frame_total) :
 
             for key_point in key_point_frame:
                 if key_point < 10 and frame_now < 30:
-                    cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
+                    cv2.imwrite("./images/frame{:03d}.jpg".format(frame_now), image)
                 elif frame_now >= key_point - 10 and frame_now < key_point + 20:
-                    cv2.imwrite("./images/frame%d.jpg" % frame_now, image)
+                    cv2.imwrite("./images/frame{:03d}.jpg".format(frame_now), image)
 
             frame_now += 1
             
-            cv2.imshow('Pro-pose', image)
-            if cv2.waitKey(5) & 0xFF == ord('q'):
-                break
+            # cv2.imshow('Pro-pose', image)
+            # if cv2.waitKey(5) & 0xFF == ord('q'):
+            #     break
     pool.close()
     pool.join()
     return max_frame_list, scores_list
