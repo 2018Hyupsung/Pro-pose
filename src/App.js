@@ -1,25 +1,30 @@
-import logo from './logo.svg';
 import './App.css';
+import Day from './component/Day';
+import DayList from './component/DayList';
+import Upload from './component/Upload';
+import Main from './component/Main';
+import ExercisePage from './component/exercisePage'
+import Yoga from './component/yoga'
+import { BrowserRouter, Routes , Route } from "react-router-dom";
 
-function App() {
+function App(props) {
+  
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    
+    <BrowserRouter>
+    <Routes>
+        <Route path ='/main' element={<Main />}/>
+        <Route path ='/day' element={<Day />}/>
+        <Route path ='/upload' element={<Upload />}/>
+        <Route path ='/daylist' element={<DayList />}/>
+        <Route path ='/exercisePage' element={<ExercisePage />}/>
+        <Route path ='/yoga' element={<Yoga />}/>
+    </Routes>
+  </BrowserRouter>   
+    
+    
+  )
 
+}
 export default App;

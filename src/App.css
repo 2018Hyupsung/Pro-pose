@@ -1,7 +1,3 @@
-.App {
-  text-align: center;
-}
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -36,3 +32,127 @@
     transform: rotate(360deg);
   }
 }
+
+.App {
+  text-align: center;
+   display: flex;
+   min-height: 100vh;
+   align-items: center;
+   justify-content: center;
+   color:white;
+   background-image: linear-gradient(79deg, #7439db, #C66FBC 48%, #F7944D);
+ }
+
+ .App2 {
+   text-align: center;
+   display: flex;
+   min-height: 100vh;
+   justify-content: center;
+   color:white;
+   background-image: linear-gradient(79deg, #7439db, #C66FBC 48%, #F7944D);
+ }
+
+ .center{
+   text-align:center;
+   background-color: black;
+ }
+ .list {
+   margin-top:30px;
+   text-align:left;
+   padding-left:20px;
+   padding-right: 20px;
+ }
+ 
+ .WOW, .login-form, .register-form{
+   display: flex;
+   flex-direction: column;
+ }
+ @media screen and (min-width: 600px) {
+   .WOW {
+     padding : 5rem;
+     border: 1px solid white;
+     border-radius:10px;
+     margin: 0.5rem;
+   }
+ }
+ 
+ label{
+   text-align: left;
+   padding: 0.25rem 0;
+ }
+ 
+ input{
+   margin: 0.5rem 0;
+   padding: 1rem;
+   border: none;
+   border-radius:10px;
+ }
+ 
+ .black-nav{
+   background:white;
+   width:100%;
+   display: top;
+   color:white;
+   padding:20px;
+   font-weight:600;
+   font-size:20px;
+ }
+
+ .menu-header{
+  width:1870px;
+  background-color:black;
+  height:100px;
+  display: top;
+  background-size : cover;
+ }
+ .main{
+  margin : 0;
+  padding :0;
+  font-family: "Montserrat";
+ }
+
+ .menu{
+  width:300px;
+  float :left;
+  display : center;
+  padding: 18px 0;
+  margin : 10;
+  text-align:center;
+ }
+
+ .menu div{
+  display: flex;
+ }
+ .menu a {
+  border: none;
+   background-color: white;
+   padding: 20px;
+   border-radius: 10px;
+   cursor: pointer;
+   color: #7439db;
+ }
+ .menu a:hover{
+  color:#333;
+ }
+.move-right{
+  margin-left: 20px;
+}
+
+ .mybutton {
+   border: none;
+   height : 30px;
+   width: 100%;
+   background-color: white;
+   padding: 20px;
+   border-radius: 10px;
+   cursor: pointer;
+   color: #7439db;
+ }
+ 
+ .link-btn{
+   background: none;
+   color: white;
+   text-decoration: underline;
+ }
+ 
+ 
