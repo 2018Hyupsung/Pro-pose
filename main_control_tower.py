@@ -175,38 +175,33 @@ if __name__ == '__main__' :
     ins_info = read_csv.read_csv(csv_path, instructor+less_finished,csv)    # csv파일을 불러들입니다.
     land_info = read_csv.read_csv(csv_path, student+land_finished,csv)
 
-    #------------------------- 3.교수자의 데이터와 학습자의 영상을 비교분석합니다.
-    stu_cap = cv2.VideoCapture(stu_path+student+less_finished+mp4)
-    stu_frame_list = pose_tracking_dtw.tracking_dtw(ins_info, stu_info, stu_cap, ins_frames, keypoint)
-    print(stu_frame_list[0])
-    for i in range(ins_frames):
-        if(i in stu_frame_list[0]):
-            continue
-        elif(os.path.exists('./images/frame{:03d}.jpg'.format(i))):
-            os.remove('./images/frame{:03d}.jpg'.format(i))
-    count = 0
+    already = False
 
-    for j in stu_frame_list[0]:
-        img = cv2.imread('./images/frame{:03d}.jpg'.format(j), cv2.IMREAD_UNCHANGED)
-        if (j == 0):
-            continue
-        for i in range(12):
-            scores_ = "score " + str(i) + " : " + "{:.2f}".format(stu_frame_list[1][count][i])
-            cv2.putText(img, scores_, (50,50 + (i * 20)), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
-        count += 1
-        cv2.imwrite("./images/frame{:03d}.jpg".format(j),img)
-    stu_cap.release()
+    #------------------------- 3.교수자의 데이터와 학습자의 영상을 비교분석합니다.
+    if (os.listdir(stu_image_path) == []) :
+        stu_cap = cv2.VideoCapture(stu_path+student+less_finished+mp4)
+        stu_frame_list = pose_tracking_dtw.tracking_dtw(ins_info, stu_info, stu_cap, ins_frames, keypoint)
+        print(stu_frame_list[0])
+        for i in range(ins_frames):
+            if(i in stu_frame_list[0]):
+                continue
+            elif(os.path.exists('./images/frame{:03d}.jpg'.format(i))):
+                os.remove('./images/frame{:03d}.jpg'.format(i))
+        count = 0
+
+        for j in stu_frame_list[0]:
+            img = cv2.imread('./images/frame{:03d}.jpg'.format(j), cv2.IMREAD_UNCHANGED)
+            if (j == 0):
+                continue
+            for i in range(12):
+                scores_ = "score " + str(i) + " : " + "{:.2f}".format(stu_frame_list[1][count][i])
+                cv2.putText(img, scores_, (50,50 + (i * 20)), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255,0,0), 2)
+            count += 1
+            cv2.imwrite("./images/frame{:03d}.jpg".format(j),img)
+        stu_cap.release()
     #-------------------------
 
     #------------------------- 4.자세에 대한 피드백을 제공합니다.
-
-
-    stu_info = read_csv.read_csv(csv_path, student+less_finished,csv)    # csv파일을 불러들입니다.
-    ins_info = read_csv.read_csv(csv_path, instructor+less_finished,csv)    # csv파일을 불러들입니다.
-    land_info = read_csv.read_csv(csv_path, student+land_finished,csv)
-
-
-
     ins_images_temp = os.listdir(ins_image_path)
     stu_images_temp = os.listdir(stu_image_path)
     for i in range(len(ins_images_temp)) :

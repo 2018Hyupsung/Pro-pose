@@ -83,7 +83,6 @@ def pose_drawing(ins_info, stu_info, ins, stu) :
             image1_1 = cv2.imread(ins[idx])
             image2 = cv2.imread(stu[idx])
             image2_1 = cv2.imread(stu[idx])
-            image2_1 = cv2.rectangle(image2_1, (0,0), (1280,720), (255,255,255), -1)
             height, width, _ = image1.shape
 
             result1 = pose.process(cv2.cvtColor(image1, cv2.COLOR_BGR2RGB))
@@ -99,21 +98,9 @@ def pose_drawing(ins_info, stu_info, ins, stu) :
             mean_x1 = sum(x_coords1) / len(x_coords1)
             mean_y1 = sum(y_coords1) / len(y_coords1)
             ins_11 = [int(x_coords1[11] * width), int(y_coords1[11] * height)]
-            ins_13 = [int(x_coords1[13] * width), int(y_coords1[13] * height)]
-            ins_15 = [int(x_coords1[15] * width), int(y_coords1[15] * height)]
-
             ins_12 = [int(x_coords1[12] * width), int(y_coords1[12] * height)]
-            ins_14 = [int(x_coords1[14] * width), int(y_coords1[14] * height)]
-            ins_16 = [int(x_coords1[16] * width), int(y_coords1[16] * height)]
-
             ins_23 = [int(x_coords1[23] * width), int(y_coords1[23] * height)]
-            ins_25 = [int(x_coords1[25] * width), int(y_coords1[25] * height)]
-            ins_27 = [int(x_coords1[27] * width), int(y_coords1[27] * height)]
-
             ins_24 = [int(x_coords1[24] * width), int(y_coords1[24] * height)]
-            ins_26 = [int(x_coords1[26] * width), int(y_coords1[26] * height)]
-            ins_28 = [int(x_coords1[28] * width), int(y_coords1[28] * height)]
-
 
 
 
@@ -125,20 +112,9 @@ def pose_drawing(ins_info, stu_info, ins, stu) :
             mean_x2 = sum(x_coords2) / len(x_coords2)
             mean_y2 = sum(y_coords2) / len(y_coords2)
             stu_11 = [int(x_coords2[11] * width), int(y_coords2[11] * height)]
-            stu_13 = [int(x_coords2[13] * width), int(y_coords2[13] * height)]
-            stu_15 = [int(x_coords2[15] * width), int(y_coords2[15] * height)]
-
             stu_12 = [int(x_coords2[12] * width), int(y_coords2[12] * height)]
-            stu_14 = [int(x_coords2[14] * width), int(y_coords2[14] * height)]
-            stu_16 = [int(x_coords2[16] * width), int(y_coords2[16] * height)]
-
             stu_23 = [int(x_coords2[23] * width), int(y_coords2[23] * height)]
-            stu_25 = [int(x_coords2[25] * width), int(y_coords2[25] * height)]
-            stu_27 = [int(x_coords2[27] * width), int(y_coords2[27] * height)]
-
             stu_24 = [int(x_coords2[24] * width), int(y_coords2[24] * height)]
-            stu_26 = [int(x_coords2[26] * width), int(y_coords2[26] * height)]
-            stu_28 = [int(x_coords2[28] * width), int(y_coords2[28] * height)]
 
             center1 = (int(mean_x1 * width), int(mean_y1 * height))
             center2 = (int(mean_x2 * width), int(mean_y2 * height))
@@ -153,130 +129,27 @@ def pose_drawing(ins_info, stu_info, ins, stu) :
             center1 = (int(center1[0] * mag), int(center1[1] * mag))
             landmarks_shifted = (center2[0] - center1[0], center2[1] - center1[1])
 
-            
-            add_x = stu_11[0]-ins_11[0]
-            add_y = stu_11[1]-ins_11[1]
-            ins_11 = (ins_11[0] + add_x, ins_11[1] + add_y)
-            ins_13 = (ins_13[0] + add_x, ins_13[1] + add_y)
-            ins_15 = (ins_15[0] + add_x, ins_15[1] + add_y)
-
-            add_x = stu_12[0]-ins_12[0]
-            add_y = stu_12[1]-ins_12[1]
-            ins_12 = (ins_12[0] + add_x, ins_12[1] + add_y)
-            ins_14 = (ins_14[0] + add_x, ins_14[1] + add_y)
-            ins_16 = (ins_16[0] + add_x, ins_16[1] + add_y)
-
-            add_x = stu_23[0]-ins_23[0]
-            add_y = stu_23[1]-ins_23[1]
-            ins_23 = (ins_23[0] + add_x, ins_23[1] + add_y)
-            ins_25 = (ins_25[0] + add_x, ins_25[1] + add_y)
-            ins_27 = (ins_27[0] + add_x, ins_27[1] + add_y)
-
-            add_x = stu_24[0]-ins_24[0]
-            add_y = stu_24[1]-ins_24[1]
-            ins_24 = (ins_24[0] + add_x, ins_24[1] + add_y)
-            ins_26 = (ins_26[0] + add_x, ins_26[1] + add_y)
-            ins_28 = (ins_28[0] + add_x, ins_28[1] + add_y)
-
-            cv2.line(
-                image2,
-                ins_11,
-                ins_13,
-                color = (255,0,0),
-                thickness = 5
-            )
-
-            cv2.line(
-                image2,
-                ins_13,
-                ins_15,
-                color = (255,0,0),
-                thickness = 5
-            )
-
-
-            cv2.line(
-                image2,
-                ins_12,
-                ins_14,
-                color = (255,0,0),
-                thickness = 5
-            )
-
-            cv2.line(
-                image2,
-                ins_14,
-                ins_16,
-                color = (255,0,0),
-                thickness = 5
-            )
-
-
-            cv2.line(
-                image2,
-                ins_23,
-                ins_25,
-                color = (255,0,0),
-                thickness = 5
-            )
-            cv2.line(
-                image2,
-                ins_25,
-                ins_27,
-                color = (255,0,0),
-                thickness = 5
-            )
-
-
-            cv2.line(
-                image2,
-                ins_24,
-                ins_26,
-                color = (255,0,0),
-                thickness = 5
-            )
-            cv2.line(
-                image2,
-                ins_26,
-                ins_28,
-                color = (255,0,0),
-                thickness = 5
-            )
-
-            
 
 
 
-            # cv2.line(
-            #     image2,
-            #     ins_11,
-            #     ins_12,
-            #     color = (255,0,0),
-            #     thickness = 5
-            # )
-            # cv2.line(
-            #     image2,
-            #     ins_23,
-            #     ins_24,
-            #     color = (255,0,0),
-            #     thickness = 5
-            # )
-            # cv2.line(
-            #     image2,
-            #     ins_11,
-            #     ins_23,
-            #     color = (255,0,0),
-            #     thickness = 5
-            # )
-            # cv2.line(
-            #     image2,
-            #     ins_12,
-            #     ins_24,
-            #     color = (255,0,0),
-            #     thickness = 5
-            # )
+            for i in range (len(connects_list)) :
+                # if(scores[i] >= 85) :
+                #     continue
+                color = (255,0,0)
+                coord1 = (int(result1.pose_landmarks.landmark[connects_list[i][0]].x * width), int(result1.pose_landmarks.landmark[connects_list[i][0]].y * height))
+                coord2 = (int(result1.pose_landmarks.landmark[connects_list[i][1]].x * width), int(result1.pose_landmarks.landmark[connects_list[i][1]].y * height))
+                coord1_1 = (coord1[0] + landmarks_shifted[0], coord1[1] + landmarks_shifted[1])
+                coord2_1 = (coord2[0] + landmarks_shifted[0], coord2[1] + landmarks_shifted[1])
 
-            result = cv2.addWeighted(image2, 0.75, image2_1, 0.25, 0)
+                cv2.line(
+                    image2,
+                    (int(coord1_1[0] * mag), int(coord1_1[1] * mag)),
+                    (int(coord2_1[0] * mag), int(coord2_1[1] * mag)),
+                    color = color,
+                    thickness = 5
+                )
+
+            result = cv2.addWeighted(image2, 0.7, image2_1, 0.3, 0)
             cv2.imwrite("./final/" + str(idx) + ".jpg", result)
 
             idx += 1

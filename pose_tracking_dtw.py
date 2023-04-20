@@ -217,9 +217,9 @@ def tracking_dtw(ins_info, stu_info, cap, frame_total, keypoint) :
             for s_idx, i in enumerate(connects_list) :
                 if array[i[0]][0] is not None and array[i[0]][1] is not None and array[i[1]][0] is not None and array[i[1]][1] is not None:
                     if scores[s_idx] >= 85 :
-                        color = (0, 255, 255)
-                    elif scores[s_idx] > 70 :
                         color = (255, 255, 0)
+                    elif scores[s_idx] > 70 :
+                        color = (0, 255, 255)
                     else:
                         color = (255, 153, 255)
                     cv2.line(
