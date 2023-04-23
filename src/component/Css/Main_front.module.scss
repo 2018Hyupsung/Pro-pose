@@ -1,0 +1,129 @@
+@import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
+.notosanskr * { 
+ font-family: 'Noto Sans KR', sans-serif;
+}
+
+@font-face {
+    font-family: 'EliceDigitalBaeum-Bd';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_elice@1.0/EliceDigitalBaeum-Bd.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Cafe24Ssurround';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24Ssurround.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.total_box
+{
+    background-color: rgb(237, 243, 248);
+    width: 100%;
+    // border-radius: 3px;
+    // border-color: yellow;
+    // border-style: dashed;
+}
+
+.left_box
+{
+    float: left;
+    width: 50%;
+    height: 720px;
+    // border-radius: 3px;
+    // border-color: red;
+    // border-style: dashed;
+}
+
+.left_box_first
+{
+    margin:140px 0px 0px 0px;
+    float: right;
+    width: 80%;
+    height: 40%;
+    // border-radius: 3px;
+    // border-color: cyan;
+    // border-style: dashed;
+}
+
+.right_box
+{
+    display: flex;
+    width: 50%;
+    height: 720px;
+    // border-radius: 3px;
+    // border-color: blue;
+    // border-style: dashed;
+}
+
+.right_box_first
+{
+
+    margin: auto;
+    width: 75%;
+    height: 75%;
+    // border-radius: 3px;
+    // border-color: magenta;
+    // border-style: dashed;
+    text-align: center;
+}
+
+.span_button
+{
+    background: #64f4ac;
+    border-radius: 4px;
+    color: #051441;
+    font-family: 'EliceDigitalBaeum-Bd';
+    letter-spacing: 5px;
+    font-size: 16px;
+    padding: 10px 25px;
+    margin: 0px 30px 0px 0px;
+}
+
+.button
+{
+    font-family: 'Noto Sans KR';
+}
+
+.copywriting
+{
+    font-family: 'Cafe24Ssurround';
+    font-size: 50px;
+    margin : 30px 0px 0px 0px;
+    white-space: pre-line;
+}
+
+.character
+{
+    position: relative;
+    width:100%;
+    z-index: 100;
+}
+
+.landmark
+{
+    position: absolute;
+    width: 8%;
+    top: 200px;
+    right: 400px;
+    z-index: 0;
+}
+
+.bubble
+{
+    position: absolute;
+    width: 10%;
+    top: 290px;
+    right: 100px;
+    z-index: 0;
+}
+
+.python
+{
+    position: absolute;
+    width: 10%;
+    top: 400px;
+    right: 470px;
+    z-index: 0;
+}

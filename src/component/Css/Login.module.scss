@@ -1,0 +1,25 @@
+.login
+{
+
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color:black;
+    background-color: rgb(237, 243, 248);
+    width: 100%;
+    height: 590px;
+}
+
+.WOW, .login-form, .register-form{
+    display: flex;
+    flex-direction: column;
+  }
+  @media screen and (min-width: 600px) {
+    .WOW {
+      padding : 5rem;
+      border: 1px solid black;
+      border-radius:10px;
+      margin: 0.5rem;
+    }
+  }

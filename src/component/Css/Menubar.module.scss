@@ -1,0 +1,42 @@
+@import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
+.notosanskr * { 
+ font-family: 'Noto Sans KR', sans-serif;
+}
+
+
+.logo
+{
+    margin:0px 0px 0px 0px;
+    padding:0px 0px 0px 0px;
+    width: 45%;
+}
+
+.navbar
+{
+    box-shadow: 0px 3px 22px 1px #555555;
+    background: rgba(0,0,0,0);
+}
+
+.bar_line
+{
+    display: inline-block;
+    font-family: 'Noto Sans KR';
+    font-size: 20px;
+    color: #000;
+    text-decoration: none;
+    text-align: center;
+    line-height: 40px;
+    margin: 0 0 0 20px;
+}
+.bar_line:after 
+{
+    align-self: center;
+    display:block;
+    content: '';
+    border-bottom: solid 2px #000;
+    transform: scaleX(0);
+    transition: transform 250ms ease-in-out;
+}
+.bar_line:hover:after {
+    transform: scaleX(1);
+}

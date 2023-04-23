@@ -1,6 +1,8 @@
 import React from 'react';
 import MenuBar from './MenuBar';
 import MenuBarBeforeLogin from './MenuBarBeforeLogin'
+import Main_front from './Main_front';
+import Footer from './Footer';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -30,8 +32,8 @@ const Main = () => {
     return (
       <div>
         <MenuBarBeforeLogin />
-        <h1>로그인 전 메인 페이지 입니다.</h1>
-    
+        <Main_front />
+        <Footer />
       </div>
     )
   }

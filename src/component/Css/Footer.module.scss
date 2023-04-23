@@ -1,0 +1,95 @@
+@import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
+.notosanskr * { 
+ font-family: 'Noto Sans KR', sans-serif;
+}
+
+.footer_set
+{
+    background-color: #929fba;
+    height: 230px;
+    // border-radius: 3px;
+    // border-color: red;
+    // border-style: dashed;
+}
+
+.number1
+{
+    float: left;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Noto Sans KR';
+    font-size: 25px;
+    color: white;
+    width: 50%;
+    height:170px;
+    // border-radius: 3px;
+    // border-color: red;
+    // border-style: dashed;
+}
+
+.number1_1
+{
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    height: 45px;
+    // border-radius: 3px;
+    // border-color: red;
+    // border-style: dashed;
+}
+
+.number1_2
+{
+    margin: 0px auto 0px auto;
+    width: 90%;
+    font-size: 15px;
+    // border-radius: 3px;
+    // border-color: blue;
+    // border-style: dashed;
+}
+
+.number2
+{
+    flex-direction: column;
+    font-size: 25px;
+    color: white;
+    float: left;
+    display: flex;
+    width: 25%;
+    height:170px;
+    // border-radius: 3px;
+    // border-color: blue;
+    // border-style: dashed;
+}
+
+.number3
+{
+    flex-direction: column;
+    font-size: 25px;
+    color: white;
+    float: left;
+    display: flex;
+    width: 25%;
+    height:170px;
+    // border-radius: 3px;
+    // border-color: violet;
+    // border-style: dashed;
+}
+
+.number5
+{
+    display: flex;
+    justify-content: center;
+    font-family: 'Noto Sans KR';
+    font-size: 17px;
+    align-items: center;
+    color: rgb(255,255,255);
+    background-color: rgb(118,127,147);
+    float: left;
+    width: 100%;
+    height: 60px;
+    // border-radius: 3px;
+    // border-color: yellow;
+    // border-style: dashed;
+}
+
