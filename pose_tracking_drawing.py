@@ -247,34 +247,34 @@ def pose_drawing(ins_info, stu_info, ins, stu) :
 
 
 
-            # cv2.line(
-            #     image2,
-            #     ins_11,
-            #     ins_12,
-            #     color = (255,0,0),
-            #     thickness = 5
-            # )
-            # cv2.line(
-            #     image2,
-            #     ins_23,
-            #     ins_24,
-            #     color = (255,0,0),
-            #     thickness = 5
-            # )
-            # cv2.line(
-            #     image2,
-            #     ins_11,
-            #     ins_23,
-            #     color = (255,0,0),
-            #     thickness = 5
-            # )
-            # cv2.line(
-            #     image2,
-            #     ins_12,
-            #     ins_24,
-            #     color = (255,0,0),
-            #     thickness = 5
-            # )
+            cv2.line(
+                image2,
+                ins_11,
+                ins_12,
+                color = (255,0,0),
+                thickness = 5
+            )
+            cv2.line(
+                image2,
+                ins_23,
+                ins_24,
+                color = (255,0,0),
+                thickness = 5
+            )
+            cv2.line(
+                image2,
+                ins_11,
+                ins_23,
+                color = (255,0,0),
+                thickness = 5
+            )
+            cv2.line(
+                image2,
+                ins_12,
+                ins_24,
+                color = (255,0,0),
+                thickness = 5
+            )
 
             result = cv2.addWeighted(image2, 0.75, image2_1, 0.25, 0)
             cv2.imwrite("./final/" + str(idx) + ".jpg", result)
