@@ -35,6 +35,7 @@ def less_frame(vid, mp4) :
         .input(vid+'.mov')
         .filter('fps', fps=15, round='up')
         .filter('unsharp', luma_msize_x=3, luma_msize_y=3, luma_amount=1.5)
+        .filter('scale', 1280, 720)
         .hflip()
         .output(out_name, vcodec = 'h264', acodec = 'aac')
         .run()

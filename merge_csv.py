@@ -2,11 +2,10 @@ import pandas as pd
 import os
 
 
-def merge() :
-
-    name = './csv/yoga1_15fps_.csv'
+def merge(sort, names) :
+    name = './csv/' + sort + '_15fps_.csv'
     if (os.path.isfile(name)) :
-        name = './csv/yoga1_1_15fps_.csv'
+        name = './csv/' + sort + names + '_15fps_.csv'
     
     file_list = os.listdir('./temp_csv/')
     file_list.sort()
@@ -20,9 +19,8 @@ def merge() :
         os.remove(file)
 
     
-def merge_land() :
-    name = './csv/yoga1_1_land.csv'
-    
+def merge_land(sort, names) :
+    name = './csv/' + sort + names + '_land.csv'
     file_list = os.listdir('./temp_land_csv/')
     file_list.sort()
     for idx, val in enumerate (file_list) :

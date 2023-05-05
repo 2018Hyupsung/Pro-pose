@@ -40,7 +40,7 @@ def score(a, b):
 def distance(a,b) :
     return math.sqrt((b[0]-a[0])**2 + (b[1]-a[1])**2)
 
-def pose_drawing(ins_info, stu_info, ins, stu) :
+def pose_drawing(ins_info, stu_info, ins, stu, sort) :
 
     scores = [[] for i in range(12)]
     cos = [[] for i in range(12)]
@@ -277,7 +277,7 @@ def pose_drawing(ins_info, stu_info, ins, stu) :
             )
 
             result = cv2.addWeighted(image2, 0.75, image2_1, 0.25, 0)
-            cv2.imwrite("./final/" + str(idx) + ".jpg", result)
+            cv2.imwrite("/Users/jangjun-yeong/webpage/public/" + sort + "/" + str(idx) + ".jpg", result)
 
             idx += 1
 

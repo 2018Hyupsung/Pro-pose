@@ -18,18 +18,17 @@ import time
 ##########################################################
 
 
-
-if __name__ == '__main__' :
+def main(videoPath, sort, name):
     start = time.time()
 
     #------------------------교수/학습자 영상 제목
-    instructor = 'yoga1'
-    student = 'yoga1_1'
+    instructor = sort
+    student = sort + name
     #------------------------
 
     #------------------------경로 모음
     ins_path = './ins_vid/'
-    stu_path = './stu_vid/'
+    stu_path = videoPath
     csv_path = './csv/'
     ins_listdir = os.listdir(ins_path)
     stu_listdir = os.listdir(stu_path)
@@ -101,7 +100,7 @@ if __name__ == '__main__' :
     if (student+less_finished+mp4) in stu_listdir :
         already = True
     if already == False :
-        video_less_frame.less_frame(stu_path+student,mp4)
+        video_less_frame.less_frame(stu_path+student,mov)
     stu_frames = video_less_frame.get_vid_info(stu_path+student+less_finished+mp4)-1
     stu_frames = int(stu_frames)
 
@@ -147,7 +146,7 @@ if __name__ == '__main__' :
 
         pool.starmap(pose_tracking_info.tracking_info,ins_infoall)
         
-        merge_csv.merge()
+        merge_csv.merge(sort, name)
 
     already = False
 
@@ -163,13 +162,13 @@ if __name__ == '__main__' :
                 break
             else :
                 stu_infoall.append((stu_cap, val, stu_thread[idx+1]-1, is_stu, keypoint))
-   
+
         pool.starmap(pose_tracking_info.tracking_info,stu_infoall)
         pool.close()
         pool.join()
 
-        merge_csv.merge()
-        merge_csv.merge_land()
+        merge_csv.merge(sort, name)
+        merge_csv.merge_land(sort, name)
     
     stu_info = read_csv.read_csv(csv_path, student+less_finished,csv)    # csv파일을 불러들입니다.
     ins_info = read_csv.read_csv(csv_path, instructor+less_finished,csv)    # csv파일을 불러들입니다.
@@ -210,7 +209,8 @@ if __name__ == '__main__' :
     ins_images.sort()
     stu_images.sort()
 
-    pose_tracking_drawing.pose_drawing(ins_info, stu_info, ins_images, stu_images)
+    pose_tracking_drawing.pose_drawing(ins_info, stu_info, ins_images, stu_images, sort)
     #-------------------------
 
     print(time.time()-start)
+    return "seccess"
